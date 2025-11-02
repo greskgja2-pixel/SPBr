@@ -1,0 +1,1782 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shopee Pro BR - Assistente de Revenda</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #FF5311;
+            --secondary: #2D5BFF;
+            --accent1: #FF2D87;
+            --accent2: #00C2A2;
+            --accent3: #FFC107;
+            --light: #f8f9fa;
+            --dark: #343a40;
+            --success: #28a745;
+            --warning: #ffc107;
+            --danger: #dc3545;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #f5f7fa 0%, #e4edf5 100%);
+            color: var(--dark);
+            line-height: 1.6;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        header {
+            background: linear-gradient(135deg, var(--primary), var(--secondary), var(--accent1));
+            color: white;
+            padding: 40px 0;
+            text-align: center;
+            border-radius: 0 0 30px 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        header::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" preserveAspectRatio="none"><path d="M0,0 L100,0 L100,100 Z" fill="rgba(255,255,255,0.1)"/></svg>');
+            background-size: cover;
+        }
+        
+        header h1 {
+            font-size: 3rem;
+            margin-bottom: 15px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+            position: relative;
+        }
+        
+        header p {
+            font-size: 1.3rem;
+            max-width: 800px;
+            margin: 0 auto;
+            position: relative;
+        }
+        
+        .card {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 25px;
+            box-shadow: 0 6px 15px rgba(0,0,0,0.08);
+            transition: transform 0.3s, box-shadow 0.3s;
+            border-left: 5px solid var(--primary);
+        }
+        
+        .card:hover {
+            transform: translateY(-7px);
+            box-shadow: 0 12px 20px rgba(0,0,0,0.12);
+        }
+        
+        .card h2 {
+            color: var(--primary);
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 2px dashed #f0f0f0;
+            display: flex;
+            align-items: center;
+        }
+        
+        .card h2 i {
+            margin-right: 12px;
+            font-size: 1.5rem;
+        }
+        
+        .tabs {
+            display: flex;
+            flex-wrap: wrap;
+            margin-bottom: 25px;
+            border-radius: 10px;
+            background: white;
+            padding: 10px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+        }
+        
+        .tab {
+            padding: 15px 25px;
+            cursor: pointer;
+            background: #f8f9fa;
+            border: none;
+            border-radius: 8px;
+            margin-right: 10px;
+            margin-bottom: 10px;
+            transition: all 0.3s;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            color: var(--dark);
+        }
+        
+        .tab i {
+            margin-right: 8px;
+            font-size: 1.2rem;
+        }
+        
+        .tab.active {
+            background: linear-gradient(135deg, var(--primary), var(--accent1));
+            color: white;
+            box-shadow: 0 4px 10px rgba(255, 45, 135, 0.3);
+        }
+        
+        .tab:hover:not(.active) {
+            background: #e9ecef;
+        }
+        
+        .tab-content {
+            display: none;
+            padding: 20px 0;
+            animation: fadeIn 0.5s ease;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .tab-content.active {
+            display: block;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 15px 0;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 0 10px rgba(0,0,0,0.05);
+        }
+        
+        th, td {
+            padding: 15px;
+            text-align: left;
+            border-bottom: 1px solid #e0e0e0;
+        }
+        
+        th {
+            background: linear-gradient(135deg, var(--secondary), #4a7dff);
+            color: white;
+            font-weight: 600;
+        }
+        
+        tr:hover {
+            background-color: #f8f9fa;
+        }
+        
+        .supplier-link {
+            color: var(--secondary);
+            text-decoration: none;
+            font-weight: 500;
+            display: inline-flex;
+            align-items: center;
+        }
+        
+        .supplier-link i {
+            margin-right: 5px;
+        }
+        
+        .supplier-link:hover {
+            text-decoration: underline;
+            color: var(--accent1);
+        }
+        
+        .niche-badge {
+            display: inline-block;
+            padding: 6px 15px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            margin: 3px;
+            font-weight: 600;
+        }
+        
+        .cosmetics {
+            background: linear-gradient(135deg, #ffe6e6, #ffcccc);
+            color: #b30000;
+        }
+        
+        .home {
+            background: linear-gradient(135deg, #e6f2ff, #cce5ff);
+            color: #0047b3;
+        }
+        
+        .kids {
+            background: linear-gradient(135deg, #e6ffe6, #ccffcc);
+            color: #006600;
+        }
+        
+        .shoes {
+            background: linear-gradient(135deg, #fff0e6, #ffddcc);
+            color: #cc6600;
+        }
+        
+        .electronics {
+            background: linear-gradient(135deg, #f0e6ff, #e6ccff);
+            color: #6600cc;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: var(--dark);
+        }
+        
+        input, select, textarea {
+            width: 100%;
+            padding: 14px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: border-color 0.3s;
+        }
+        
+        input:focus, select:focus, textarea:focus {
+            border-color: var(--secondary);
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(45, 91, 255, 0.1);
+        }
+        
+        button {
+            background: linear-gradient(135deg, var(--primary), var(--accent1));
+            color: white;
+            border: none;
+            padding: 14px 28px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 600;
+            transition: all 0.3s;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 10px rgba(255, 45, 135, 0.3);
+        }
+        
+        button i {
+            margin-right: 8px;
+        }
+        
+        button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 15px rgba(255, 45, 135, 0.4);
+        }
+        
+        .calculator-result {
+            background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+            padding: 20px;
+            border-radius: 10px;
+            margin-top: 25px;
+            border-left: 5px solid var(--success);
+        }
+        
+        .profit {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: var(--success);
+        }
+        
+        .checklist-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+            padding: 12px;
+            border-radius: 8px;
+            transition: background 0.3s;
+        }
+        
+        .checklist-item:hover {
+            background: #f8f9fa;
+        }
+        
+        .checklist-item input {
+            width: auto;
+            margin-right: 15px;
+            transform: scale(1.3);
+        }
+        
+        .strategy-card {
+            border-left: 5px solid var(--accent2);
+        }
+        
+        .products-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+        
+        .product-card {
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+        
+        .product-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 15px rgba(0,0,0,0.12);
+        }
+        
+        .product-image {
+            width: 100%;
+            height: 150px;
+            object-fit: cover;
+            background-color: #f8f9fa;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.5rem;
+            color: white;
+        }
+        
+        .cosmetics-bg {
+            background: linear-gradient(135deg, #FF5311, #FF2D87);
+        }
+        
+        .home-bg {
+            background: linear-gradient(135deg, #2D5BFF, #00C2A2);
+        }
+        
+        .kids-bg {
+            background: linear-gradient(135deg, #FFC107, #FF5311);
+        }
+        
+        .shoes-bg {
+            background: linear-gradient(135deg, #00C2A2, #2D5BFF);
+        }
+        
+        .electronics-bg {
+            background: linear-gradient(135deg, #6600cc, #FF2D87);
+        }
+        
+        .product-info {
+            padding: 15px;
+        }
+        
+        .product-name {
+            font-weight: 600;
+            margin-bottom: 5px;
+            color: var(--dark);
+        }
+        
+        .product-niche {
+            font-size: 0.85rem;
+            color: #6c757d;
+        }
+        
+        .niche-section {
+            margin-bottom: 40px;
+        }
+        
+        .niche-title {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #f0e0e0;
+            color: var(--secondary);
+        }
+        
+        .niche-title i {
+            margin-right: 10px;
+            font-size: 1.5rem;
+        }
+        
+        footer {
+            text-align: center;
+            padding: 30px;
+            margin-top: 50px;
+            color: #6c757d;
+            font-size: 0.9rem;
+            background: white;
+            border-radius: 15px 15px 0 0;
+            box-shadow: 0 -5px 15px rgba(0,0,0,0.05);
+        }
+        
+        .creation-form {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+        
+        .creation-results {
+            margin-top: 30px;
+        }
+        
+        .result-box {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 20px;
+            border-left: 5px solid var(--accent2);
+        }
+        
+        .result-box h3 {
+            margin-bottom: 15px;
+            color: var(--secondary);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .copy-btn {
+            background: var(--accent2);
+            padding: 8px 15px;
+            font-size: 0.9rem;
+        }
+        
+        .copy-btn:hover {
+            background: #00a88a;
+        }
+        
+        .roas-indicator {
+            display: flex;
+            align-items: center;
+            margin-top: 10px;
+        }
+        
+        .roas-bar {
+            flex-grow: 1;
+            height: 10px;
+            background: #e9ecef;
+            border-radius: 5px;
+            overflow: hidden;
+            margin: 0 10px;
+        }
+        
+        .roas-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--danger), var(--warning), var(--success));
+            border-radius: 5px;
+        }
+        
+        .creation-tips {
+            background: linear-gradient(135deg, #fff9e6, #fff0cc);
+            border-left: 5px solid var(--accent3);
+            padding: 15px;
+            border-radius: 10px;
+            margin-top: 20px;
+        }
+        
+        .ad-maintenance-form {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+        
+        .roas-suggestions {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-top: 20px;
+        }
+        
+        .roas-suggestion {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 20px;
+            border-left: 5px solid var(--accent2);
+        }
+        
+        .roas-suggestion h3 {
+            margin-bottom: 15px;
+            color: var(--secondary);
+        }
+        
+        .ad-products-table {
+            margin-top: 30px;
+        }
+        
+        .export-btn {
+            background: var(--accent2);
+            margin-top: 20px;
+        }
+        
+        .signature {
+            margin-top: 10px;
+            font-style: italic;
+            color: var(--dark);
+        }
+        
+        .reviews-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+        
+        .review-response {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 20px;
+            border-left: 5px solid var(--accent2);
+            position: relative;
+        }
+        
+        .review-response-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        
+        .review-response-content {
+            line-height: 1.5;
+        }
+        
+        .review-copy-btn {
+            background: var(--accent2);
+            padding: 6px 12px;
+            font-size: 0.8rem;
+        }
+        
+        .review-type-positive {
+            border-left-color: var(--success);
+        }
+        
+        .review-type-negative {
+            border-left-color: var(--danger);
+        }
+        
+        .review-type-neutral {
+            border-left-color: var(--warning);
+        }
+        
+        @media (max-width: 768px) {
+            .container {
+                padding: 10px;
+            }
+            
+            header h1 {
+                font-size: 2.2rem;
+            }
+            
+            .card {
+                padding: 20px;
+            }
+            
+            .tab {
+                padding: 12px 20px;
+                font-size: 0.9rem;
+            }
+            
+            th, td {
+                padding: 10px 12px;
+                font-size: 0.9rem;
+            }
+            
+            .products-grid {
+                grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+                gap: 15px;
+            }
+            
+            .creation-form {
+                grid-template-columns: 1fr;
+            }
+            
+            .ad-maintenance-form {
+                grid-template-columns: 1fr;
+            }
+            
+            .roas-suggestions {
+                grid-template-columns: 1fr;
+            }
+            
+            .reviews-container {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <h1><i class="fas fa-store"></i> Shopee Pro BR</h1>
+            <p>Seu assistente inteligente para encontrar produtos lucrativos para revenda no Shopee</p>
+        </div>
+    </header>
+    
+    <div class="container">
+        <div class="tabs">
+            <div class="tab active" data-tab="suppliers">
+                <i class="fas fa-list-alt"></i> Fornecedores
+            </div>
+            <div class="tab" data-tab="products">
+                <i class="fas fa-fire"></i> Produtos em Alta
+            </div>
+            <div class="tab" data-tab="creation">
+                <i class="fas fa-magic"></i> Criação Rápida
+            </div>
+            <div class="tab" data-tab="maintenance">
+                <i class="fas fa-chart-line"></i> Manutenção de Anúncios
+            </div>
+            <div class="tab" data-tab="reviews">
+                <i class="fas fa-star"></i> Respostas a Reviews
+            </div>
+            <div class="tab" data-tab="strategies">
+                <i class="fas fa-chess-knight"></i> Estratégias
+            </div>
+            <div class="tab" data-tab="checklist">
+                <i class="fas fa-tasks"></i> Checklist
+            </div>
+        </div>
+        
+        <div class="tab-content active" id="suppliers">
+            <div class="card">
+                <h2><i class="fas fa-truck-loading"></i> Lista de Fornecedores por Nicho</h2>
+                <p>Filtre os fornecedores por categoria para encontrar os melhores produtos para sua loja:</p>
+                
+                <div class="form-group">
+                    <label for="niche-filter"><i class="fas fa-filter"></i> Filtrar por Nicho:</label>
+                    <select id="niche-filter">
+                        <option value="all">Todos os Nichos</option>
+                        <option value="cosmetics">Maquiagem / Cosméticos</option>
+                        <option value="home">Casa & Utilidades Domésticas</option>
+                        <option value="kids">Moda Infantil</option>
+                        <option value="shoes">Calçados</option>
+                        <option value="electronics">Eletrônicos</option>
+                    </select>
+                </div>
+                
+                <table id="suppliers-table">
+                    <thead>
+                        <tr>
+                            <th>Fornecedor</th>
+                            <th>Site</th>
+                            <th>Nicho</th>
+                        </tr>
+                    </thead>
+                    <tbody id="suppliers-body">
+                        <!-- Suppliers will be populated by JavaScript -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        
+        <div class="tab-content" id="products">
+            <div class="card">
+                <h2><i class="fas fa-chart-line"></i> Produtos Mais Vendidos por Nicho</h2>
+                <p>Confira os produtos com maior giro no mercado para focar suas estratégias de revenda:</p>
+                
+                <div class="niche-section">
+                    <h3 class="niche-title"><i class="fas fa-palette"></i> Maquiagem & Cosméticos</h3>
+                    <div class="products-grid" id="cosmetics-products">
+                        <!-- Cosmetics products will be populated by JavaScript -->
+                    </div>
+                </div>
+                
+                <div class="niche-section">
+                    <h3 class="niche-title"><i class="fas fa-home"></i> Casa & Utilidades Domésticas</h3>
+                    <div class="products-grid" id="home-products">
+                        <!-- Home products will be populated by JavaScript -->
+                    </div>
+                </div>
+                
+                <div class="niche-section">
+                    <h3 class="niche-title"><i class="fas fa-child"></i> Moda Infantil</h3>
+                    <div class="products-grid" id="kids-products">
+                        <!-- Kids products will be populated by JavaScript -->
+                    </div>
+                </div>
+                
+                <div class="niche-section">
+                    <h3 class="niche-title"><i class="fas fa-shoe-prints"></i> Calçados</h3>
+                    <div class="products-grid" id="shoes-products">
+                        <!-- Shoes products will be populated by JavaScript -->
+                    </div>
+                </div>
+                
+                <div class="niche-section">
+                    <h3 class="niche-title"><i class="fas fa-laptop"></i> Eletrônicos</h3>
+                    <div class="products-grid" id="electronics-products">
+                        <!-- Electronics products will be populated by JavaScript -->
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="tab-content" id="creation">
+            <div class="card">
+                <h2><i class="fas fa-magic"></i> Criação Rápida de Anúncios</h2>
+                <p>Preencha os dados do produto para calcular a lucratividade e gerar conteúdo otimizado:</p>
+                
+                <div class="creation-form">
+                    <div>
+                        <div class="form-group">
+                            <label for="product-name"><i class="fas fa-tag"></i> Nome do Produto:</label>
+                            <input type="text" id="product-name" placeholder="Ex: Base Líquida Matte 30ml">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="product-niche"><i class="fas fa-filter"></i> Nicho do Produto:</label>
+                            <select id="product-niche">
+                                <option value="cosmetics">Maquiagem / Cosméticos</option>
+                                <option value="home">Casa & Utilidades Domésticas</option>
+                                <option value="kids">Moda Infantil</option>
+                                <option value="shoes">Calçados</option>
+                                <option value="electronics">Eletrônicos</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="product-cost"><i class="fas fa-money-bill-wave"></i> Custo do Produto (R$):</label>
+                            <input type="number" id="product-cost" step="0.01" placeholder="Ex: 15.90">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="tax-percent"><i class="fas fa-receipt"></i> Valor do Imposto (%):</label>
+                            <input type="number" id="tax-percent" step="0.01" placeholder="Ex: 12.5">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="selling-price"><i class="fas fa-dollar-sign"></i> Preço de Venda no Shopee (R$):</label>
+                            <input type="number" id="selling-price" step="0.01" placeholder="Ex: 49.90">
+                        </div>
+                        
+                        <button id="calculate-btn"><i class="fas fa-calculator"></i> Calcular Lucratividade</button>
+                    </div>
+                    
+                    <div>
+                        <div id="calculation-result" class="calculator-result" style="display: none;">
+                            <h3><i class="fas fa-chart-bar"></i> Resultado do Cálculo</h3>
+                            <p>Margem de Contribuição: <span id="contribution-margin" class="profit">R$ 0,00</span></p>
+                            <p>Percentual de Margem: <span id="margin-percent">0%</span></p>
+                            <p>Taxas Shopee (20% + R$4): <span id="shopee-fees">R$ 0,00</span></p>
+                            <p>ROAS Ideal: <span id="ideal-roas">0</span></p>
+                            
+                            <div class="roas-indicator">
+                                <span>Baixo</span>
+                                <div class="roas-bar">
+                                    <div class="roas-fill" id="roas-fill" style="width: 0%;"></div>
+                                </div>
+                                <span>Alto</span>
+                            </div>
+                            
+                            <div class="creation-tips">
+                                <h4><i class="fas fa-lightbulb"></i> Dicas para Melhorar a Margem:</h4>
+                                <ul>
+                                    <li>Negocie melhores preços com fornecedores</li>
+                                    <li>Compre em maiores quantidades para obter descontos</li>
+                                    <li>Considere aumentar o preço de venda se o mercado permitir</li>
+                                    <li>Reduza custos de embalagem e logística</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <button id="generate-btn" style="margin-top: 20px; width: 100%;"><i class="fas fa-bolt"></i> Gerar Conteúdo para Anúncio</button>
+                
+                <div class="creation-results" id="creation-results" style="display: none;">
+                    <div class="result-box">
+                        <h3>
+                            <span><i class="fas fa-heading"></i> Sugestões de Título SEO</span>
+                            <button class="copy-btn" data-target="seo-title-1"><i class="fas fa-copy"></i> Copiar</button>
+                        </h3>
+                        <p id="seo-title-1"></p>
+                        <p id="seo-title-2" style="margin-top: 10px;"></p>
+                    </div>
+                    
+                    <div class="result-box">
+                        <h3>
+                            <span><i class="fas fa-align-left"></i> Descrição Persuasiva</span>
+                            <button class="copy-btn" data-target="product-description"><i class="fas fa-copy"></i> Copiar</button>
+                        </h3>
+                        <div id="product-description"></div>
+                    </div>
+                    
+                    <div class="result-box">
+                        <h3>
+                            <span><i class="fas fa-film"></i> Legenda para Reels/Instagram</span>
+                            <button class="copy-btn" data-target="reels-caption"><i class="fas fa-copy"></i> Copiar</button>
+                        </h3>
+                        <div id="reels-caption"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="tab-content" id="maintenance">
+            <div class="card">
+                <h2><i class="fas fa-chart-line"></i> Manutenção Semanal de Anúncios</h2>
+                <p>Acompanhe o desempenho dos seus anúncios e otimize o ROAS:</p>
+                
+                <div class="ad-maintenance-form">
+                    <div>
+                        <div class="form-group">
+                            <label for="ad-product-name"><i class="fas fa-tag"></i> Nome do Produto:</label>
+                            <input type="text" id="ad-product-name" placeholder="Ex: Base Líquida Matte 30ml">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="target-roas"><i class="fas fa-bullseye"></i> ROAS Alvo:</label>
+                            <input type="number" id="target-roas" step="0.01" placeholder="Ex: 3.5">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="achieved-roas"><i class="fas fa-chart-bar"></i> ROAS Alcançado:</label>
+                            <input type="number" id="achieved-roas" step="0.01" placeholder="Ex: 2.8">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="ctr"><i class="fas fa-mouse-pointer"></i> CTR (%):</label>
+                            <input type="number" id="ctr" step="0.01" placeholder="Ex: 4.2">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="investment"><i class="fas fa-money-bill-wave"></i> Investimento (R$):</label>
+                            <input type="number" id="investment" step="0.01" placeholder="Ex: 150.00">
+                        </div>
+                        
+                        <button id="add-ad-btn"><i class="fas fa-plus"></i> Adicionar Produto</button>
+                    </div>
+                    
+                    <div>
+                        <div id="roas-suggestions-container" style="display: none;">
+                            <h3><i class="fas fa-lightbulb"></i> Sugestões de ROAS</h3>
+                            
+                            <div class="roas-suggestions">
+                                <div class="roas-suggestion">
+                                    <h3><i class="fas fa-rocket"></i> Aumentar Vendas</h3>
+                                    <p>ROAS Sugerido: <strong id="increase-sales-roas">0</strong></p>
+                                    <p>Objetivo: Expandir alcance e aumentar volume de vendas, mesmo com custo maior por venda.</p>
+                                    <p>Recomendação: Aumente o orçamento em <strong id="increase-budget">0%</strong> e foque em palavras-chave de alto volume.</p>
+                                </div>
+                                
+                                <div class="roas-suggestion">
+                                    <h3><i class="fas fa-piggy-bank"></i> Economizar</h3>
+                                    <p>ROAS Sugerido: <strong id="save-money-roas">0</strong></p>
+                                    <p>Objetivo: Manter vendas atuais enquanto reduz custos com anúncios.</p>
+                                    <p>Recomendação: Reduza o orçamento em <strong id="decrease-budget">0%</strong> e foque em palavras-chave mais específicas.</p>
+                                </div>
+                            </div>
+                            
+                            <button id="export-btn" class="export-btn"><i class="fas fa-file-export"></i> Exportar Relatório</button>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="ad-products-table">
+                    <h3><i class="fas fa-list"></i> Produtos em Campanha</h3>
+                    <table id="ad-products-table">
+                        <thead>
+                            <tr>
+                                <th>Produto</th>
+                                <th>ROAS Alvo</th>
+                                <th>ROAS Alcançado</th>
+                                <th>CTR</th>
+                                <th>Investimento</th>
+                                <th>Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody id="ad-products-body">
+                            <!-- Ad products will be populated by JavaScript -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        
+        <div class="tab-content" id="reviews">
+            <div class="card">
+                <h2><i class="fas fa-star"></i> Gerador de Respostas para Reviews</h2>
+                <p>Selecione o tipo de review e gere respostas personalizadas para seus clientes:</p>
+                
+                <div class="form-group">
+                    <label for="review-type"><i class="fas fa-comment-dots"></i> Tipo de Review:</label>
+                    <select id="review-type">
+                        <option value="positive">Positivo ⭐⭐⭐⭐⭐</option>
+                        <option value="negative">Negativo ⭐</option>
+                        <option value="neutral">Neutro ⭐⭐⭐</option>
+                    </select>
+                </div>
+                
+                <button id="generate-review-btn" style="width: 100%;"><i class="fas fa-comments"></i> Gerar Respostas</button>
+                
+                <div id="review-responses-container" style="display: none; margin-top: 30px;">
+                    <h3><i class="fas fa-reply"></i> Sugestões de Resposta</h3>
+                    <p>Clique no botão "Copiar" ao lado de cada resposta para usar no Shopee:</p>
+                    
+                    <div class="reviews-container" id="review-responses">
+                        <!-- Review responses will be populated by JavaScript -->
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="tab-content" id="strategies">
+            <div class="card strategy-card">
+                <h2><i class="fas fa-chess-knight"></i> Estratégias de Revenda por Nicho</h2>
+                
+                <h3><i class="fas fa-palette"></i> Maquiagem e Cosméticos</h3>
+                <ul>
+                    <li>🎨 Foque em kits e coleções sazonais (Natal, Dia dos Namorados)</li>
+                    <li>📸 Produtos com apelo em redes sociais têm maior giro</li>
+                    <li>🖼️ Invista em fotos profissionais e swatches (amostras de cores)</li>
+                    <li>🎁 Ofereça brindes como pincéis ou amostras para aumentar ticket médio</li>
+                    <li>👩‍💼 Crie conteúdo educativo (tutoriais) para engajar clientes</li>
+                </ul>
+                
+                <h3><i class="fas fa-home"></i> Cama, Mesa, Banho e Utilidades Domésticas</h3>
+                <ul>
+                    <li>🛏️ Jogos de cama com temas específicos (infantil, casal) vendem bem</li>
+                    <li>💡 Utilidades com design diferenciado têm melhor margem</li>
+                    <li>🎁 Foque em produtos para presentes (panos de prato temáticos, kits banho)</li>
+                    <li>📦 Promova combos (toalha + pano de banho + tapete)</li>
+                    <li>🏠 Destaque a praticidade e durabilidade dos produtos</li>
+                </ul>
+                
+                <h3><i class="fas fa-child"></i> Moda Infantil</h3>
+                <ul>
+                    <li>👶 Roupas temáticas (personagens, datas comemorativas) têm alta demanda</li>
+                    <li>📦 Kits (body + macacão + conjunto) facilitam a venda</li>
+                    <li>🧵 Foque em tecidos confortáveis e hipoalergênicos</li>
+                    <li>📸 Invista em fotos com crianças (com autorização) ou em manequins infantis</li>
+                    <li>🎒 Produtos para volta às aulas têm pico de vendas em janeiro/fevereiro</li>
+                </ul>
+                
+                <h3><i class="fas fa-shoe-prints"></i> Calçados</h3>
+                <ul>
+                    <li>👟 Tênis casuais e esportivos têm giro constante</li>
+                    <li>🩴 Sandálias e chinelos na primavera/verão</li>
+                    <li>💳 Ofereça opções de pagamento parcelado (calçados têm ticket médio mais alto)</li>
+                    <li>📏 Foque na descrição detalhada dos materiais e orientações de tamanho</li>
+                    <li>📦 Inclua no anúncio informações sobre trocas facilitadas</li>
+                </ul>
+                
+                <h3><i class="fas fa-laptop"></i> Eletrônicos e Informática</h3>
+                <ul>
+                    <li>🔌 Cabos e adaptadores têm alta demanda e baixo custo</li>
+                    <li>🎧 Fones de ouvido com boa relação custo-benefício são best-sellers</li>
+                    <li>📱 Acessórios para celular (capas, películas) têm giro rápido</li>
+                    <li>🔋 Power banks e carregadores portáteis são procurados</li>
+                    <li>🖥️ Peças de computador com garantia e suporte técnico</li>
+                    <li>📦 Ofereça kits (fone + cabo + adaptador) para aumentar valor médio</li>
+                    <li>🔍 Destaque compatibilidade e especificações técnicas</li>
+                </ul>
+            </div>
+        </div>
+        
+        <div class="tab-content" id="checklist">
+            <div class="card">
+                <h2><i class="fas fa-tasks"></i> Checklist do Revendedor Shopee</h2>
+                <p>Marque cada etapa concluída para garantir o sucesso das suas vendas:</p>
+                
+                <div class="checklist-item">
+                    <input type="checkbox" id="step1">
+                    <label for="step1">🔍 Pesquisei produtos com boa margem nos fornecedores</label>
+                </div>
+                
+                <div class="checklist-item">
+                    <input type="checkbox" id="step2">
+                    <label for="step2">📊 Analisei a concorrência no Shopee (preços, avaliações)</label>
+                </div>
+                
+                <div class="checklist-item">
+                    <input type="checkbox" id="step3">
+                    <label for="step3">🧮 Calculei o preço final considerando todas as taxas</label>
+                </div>
+                
+                <div class="checklist-item">
+                    <input type="checkbox" id="step4">
+                    <label for="step4">📸 Tirei fotos profissionais do produto (múltiplos ângulos)</label>
+                </div>
+                
+                <div class="checklist-item">
+                    <input type="checkbox" id="step5">
+                    <label for="step5">🏷️ Criei título otimizado com palavras-chave relevantes</label>
+                </div>
+                
+                <div class="checklist-item">
+                    <input type="checkbox" id="step6">
+                    <label for="step6">📝 Escrevi descrição detalhada com benefícios e especificações</label>
+                </div>
+                
+                <div class="checklist-item">
+                    <input type="checkbox" id="step7">
+                    <label for="step7">🎨 Configurei variações (tamanho, cor) se aplicável</label>
+                </div>
+                
+                <div class="checklist-item">
+                    <input type="checkbox" id="step8">
+                    <label for="step8">🚚 Defini política de frete grátis ou com desconto</label>
+                </div>
+                
+                <div class="checklist-item">
+                    <input type="checkbox" id="step9">
+                    <label for="step9">🎫 Criei cupons de desconto para a loja</label>
+                </div>
+                
+                <div class="checklist-item">
+                    <input type="checkbox" id="step10">
+                    <label for="step10">📢 Planejei estratégia inicial de anúncios (Shopee Ads)</label>
+                </div>
+                
+                <button id="reset-checklist"><i class="fas fa-redo"></i> Reiniciar Checklist</button>
+            </div>
+        </div>
+    </div>
+    
+    <footer>
+        <div class="container">
+            <p><i class="fas fa-store"></i> Shopee Pro BR - Ferramenta de auxílio para revendedores | Desenvolvido com base na lista de fornecedores fornecida</p>
+            <p class="signature">By Otacilio Gresk 2025</p>
+        </div>
+    </footer>
+
+    <script>
+        // Supplier data
+        const suppliers = [
+            { name: "Virtual Make", url: "https://www.virtualmake.com.br/", niche: "cosmetics" },
+            { name: "Make no Atacado", url: "https://www.makenoatacado.com.br/", niche: "cosmetics" },
+            { name: "Distribuidora JCF", url: "https://www.distribuidorajcf.com.br/", niche: "cosmetics" },
+            { name: "Amomake Atacado", url: "https://amomakeatacado.com.br/", niche: "cosmetics" },
+            { name: "Loja Vivaldi – Atacado", url: "https://www.lojavivaldi.com.br/atacado", niche: "home" },
+            { name: "Textil Arte", url: "https://textilarte.com.br/", niche: "home" },
+            { name: "Kapri Enxovais", url: "https://kaprienxovais.com/", niche: "home" },
+            { name: "Ke Home", url: "https://kehome.com.br/", niche: "home" },
+            { name: "Padovani Distribuidora", url: "https://lojapadovani.com.br/", niche: "home" },
+            { name: "Distribuidora Modenuti", url: "https://www.modenuti.com.br/", niche: "home" },
+            { name: "Nipo Center Atacadista", url: "https://www.atacadonipocenter.com.br/", niche: "home" },
+            { name: "Mix Lar", url: "https://www.mixlar.com.br/", niche: "home" },
+            { name: "25 de Março Online", url: "https://www.25demarcoonline.com.br/utensilios-domesticos-para-revenda", niche: "home" },
+            { name: "Utimix Importadora", url: "https://www.utimix.com/categoria/casa-cozinha/", niche: "home" },
+            { name: "Bem Mulher Maquiagem", url: "https://www.bemmulhermaquiagem.com.br/", niche: "cosmetics" },
+            { name: "PLB Importadora", url: "https://www.plbimportadora.com.br/", niche: "electronics" },
+            { name: "Zhang Maquiagem", url: "https://www.zhangmaquiagem.com.br/", niche: "cosmetics" },
+            { name: "ISSAM (B2B)", url: "https://b2b.issam.com.br/", niche: "electronics" },
+            { name: "BRW Suprimentos (B2B)", url: "https://b2b.brwsuprimentos.com.br/", niche: "electronics" },
+            { name: "Só Atacado", url: "https://www.soatacado.com/", niche: "all" },
+            { name: "Hiper Têxtil (B2B)", url: "https://b2b.hipertextil.ind.br/", niche: "home" },
+            { name: "Brascol (Atacado Bebê/Infantil)", url: "https://brascol.com.br/", niche: "kids" },
+            { name: "Ascona (Atacado Moda Infantil - Brás)", url: "https://www.ascona.com.br/", niche: "kids" },
+            { name: "Lari Kids (Atacado)", url: "https://larikidsatacado.com.br/", niche: "kids" },
+            { name: "Paulimar (Moda Bebê/Infantil)", url: "https://www.paulimar.com.br/", niche: "kids" },
+            { name: "Zapata (Atacado de Calçados)", url: "https://www.atacadozapata.com.br/", niche: "shoes" },
+            { name: "Daniel Atacado", url: "https://www.danielatacado.com.br/", niche: "shoes" },
+            { name: "Clovis Calçados (Atacado)", url: "https://www.clovisatacado.com.br/", niche: "shoes" },
+            { name: "BuscaShoes (Portal B2B de calçados)", url: "https://www.buscashoes.com.br/", niche: "shoes" },
+            { name: "Avacy Distribuidora", url: "https://www.avacy.com.br/", niche: "shoes" },
+            { name: "Mirão Distribuidora (Informática & Eletrônicos)", url: "https://www.mirao.com.br/", niche: "electronics" },
+            { name: "Atacadão Eletrônicos", url: "https://atacadaoeletronicos.com.br/", niche: "electronics" },
+            { name: "Alibaba (Marketplace B2B internacional)", url: "https://www.alibaba.com/", niche: "electronics" }
+        ];
+
+        // Best-selling products data with colorful gradient backgrounds and icons
+        const bestSellingProducts = {
+            cosmetics: [
+                { name: "Base Líquida Matte", niche: "cosmetics", icon: "💄" },
+                { name: "Paleta de Sombras", niche: "cosmetics", icon: "🎨" },
+                { name: "Batom Líquido", niche: "cosmetics", icon: "👄" },
+                { name: "Delineador Líquido", niche: "cosmetics", icon: "✏️" },
+                { name: "Pó Compacto", niche: "cosmetics", icon: "🪞" }
+            ],
+            home: [
+                { name: "Jogo de Cama Casal", niche: "home", icon: "🛏️" },
+                { name: "Toalha de Banho", niche: "home", icon: "🧺" },
+                { name: "Kit Panelas", niche: "home", icon: "🍳" },
+                { name: "Jogo de Copos", niche: "home", icon: "🥂" },
+                { name: "Tapete Decorativo", niche: "home", icon: "🧹" }
+            ],
+            kids: [
+                { name: "Conjunto Infantil", niche: "kids", icon: "👕" },
+                { name: "Body Bebê", niche: "kids", icon: "👶" },
+                { name: "Macaquinho", niche: "kids", icon: "🐵" },
+                { name: "Conjunto Moletom", niche: "kids", icon: "🧥" },
+                { name: "Vestido Infantil", niche: "kids", icon: "👗" }
+            ],
+            shoes: [
+                { name: "Tênis Casual", niche: "shoes", icon: "👟" },
+                { name: "Sandália Feminina", niche: "shoes", icon: "👡" },
+                { name: "Chinelo Unissex", niche: "shoes", icon: "🩴" },
+                { name: "Sapato Social", niche: "shoes", icon: "👞" },
+                { name: "Tênis Esportivo", niche: "shoes", icon: "🏃" }
+            ],
+            electronics: [
+                { name: "Fone Bluetooth", niche: "electronics", icon: "🎧" },
+                { name: "Carregador Portátil", niche: "electronics", icon: "🔋" },
+                { name: "Cabo USB-C", niche: "electronics", icon: "🔌" },
+                { name: "Capa de Celular", niche: "electronics", icon: "📱" },
+                { name: "Adaptador HDMI", niche: "electronics", icon: "🖥️" }
+            ]
+        };
+
+        // Niche mapping for display
+        const nicheDisplay = {
+            "cosmetics": "Maquiagem / Cosméticos",
+            "home": "Cama / Mesa / Banho / Utilidades Domésticas",
+            "kids": "Moda Infantil",
+            "shoes": "Calçados",
+            "electronics": "Eletrônicos / Informática",
+            "all": "Diversos"
+        };
+
+        // Niche class mapping for badges
+        const nicheClass = {
+            "cosmetics": "cosmetics",
+            "home": "home",
+            "kids": "kids",
+            "shoes": "shoes",
+            "electronics": "electronics",
+            "all": "home"
+        };
+
+        // Niche background mapping for product cards
+        const nicheBackground = {
+            "cosmetics": "cosmetics-bg",
+            "home": "home-bg",
+            "kids": "kids-bg",
+            "shoes": "shoes-bg",
+            "electronics": "electronics-bg"
+        };
+
+        // Keywords for each niche to use in content generation
+        const nicheKeywords = {
+            cosmetics: ["beleza", "maquiagem", "cosméticos", "make", "rosto", "pele", "glamour", "estética"],
+            home: ["casa", "lar", "decoração", "organização", "conforto", "utilidades", "cozinha", "banho"],
+            kids: ["infantil", "criança", "bebê", "kids", "divertido", "colorido", "conforto", "seguro"],
+            shoes: ["calçados", "sapatos", "tênis", "conforto", "moda", "estilo", "passo", "pisada"],
+            electronics: ["tecnologia", "eletrônico", "gadget", "conectividade", "moderno", "inovação", "smart"]
+        };
+
+        // Review responses data
+        const reviewResponses = {
+            positive: [
+                "Muito obrigado pela sua avaliação positiva! 😊 Ficamos felizes em saber que você está satisfeito(a) com o produto. Esperamos vê-lo(a) novamente em nossa loja!",
+                "Que bom que gostou do produto! 🎉 Sua satisfação é nossa maior recompensa. Agradecemos pela confiança e esperamos seu próximo pedido!",
+                "Agradecemos pela avaliação positiva! ⭐ Sua opinião é muito importante para nós. Continue acompanhando nossa loja para mais novidades!",
+                "Ficamos muito felizes com seu feedback positivo! 😄 Trabalhamos para oferecer sempre o melhor. Obrigado por fazer parte da nossa história!",
+                "Muito obrigado pela confiança e pela avaliação! 🙏 Sua satisfação nos motiva a continuar melhorando. Esperamos vê-lo(a) em breve!"
+            ],
+            negative: [
+                "Lamentamos que sua experiência não foi a esperada. 😔 Entre em contato conosco para que possamos resolver esta situação da melhor forma possível.",
+                "Pedimos desculpas pela insatisfação. 😐 Faremos o possível para melhorar. Por favor, nos envie uma mensagem para podermos ajudá-lo(a).",
+                "Nos desculpe pelo ocorrido. 🙁 Sua satisfação é muito importante para nós. Entre em contato para que possamos encontrar uma solução.",
+                "Lamentamos muito pelo inconveniente. 😟 Estamos à disposição para resolver esta situação. Por favor, nos envie seus dados de pedido.",
+                "Pedimos sinceras desculpas pela experiência negativa. 😔 Valorizamos seu feedback e gostaríamos de melhorar. Entre em contato conosco."
+            ],
+            neutral: [
+                "Agradecemos seu feedback! 😊 Sua opinião nos ajuda a melhorar. Esperamos poder superar suas expectativas no próximo pedido.",
+                "Obrigado pela avaliação! 👍 Levaremos seus comentários em consideração para melhorarmos nossos produtos e serviços.",
+                "Agradecemos pela honestidade em sua avaliação! 📝 Seu feedback é valioso para nosso crescimento. Esperamos vê-lo(a) novamente!",
+                "Obrigado por compartilhar sua experiência! 😊 Consideraremos seus comentários para aprimorarmos nossa loja. Até a próxima!",
+                "Agradecemos pelo feedback construtivo! 💡 Sua opinião nos ajuda a evoluir. Esperamos ter a oportunidade de servi-lo(a) melhor na próxima vez."
+            ]
+        };
+
+        // Ad products array for maintenance tab
+        let adProducts = [];
+
+        // Initialize the suppliers table
+        function initializeSuppliersTable() {
+            const tableBody = document.getElementById('suppliers-body');
+            tableBody.innerHTML = '';
+            
+            suppliers.forEach(supplier => {
+                const row = document.createElement('tr');
+                
+                const nameCell = document.createElement('td');
+                nameCell.textContent = supplier.name;
+                
+                const urlCell = document.createElement('td');
+                const link = document.createElement('a');
+                link.href = supplier.url;
+                link.innerHTML = '<i class="fas fa-external-link-alt"></i> Visitar Site';
+                link.className = 'supplier-link';
+                link.target = '_blank';
+                urlCell.appendChild(link);
+                
+                const nicheCell = document.createElement('td');
+                const nicheBadge = document.createElement('span');
+                nicheBadge.textContent = nicheDisplay[supplier.niche];
+                nicheBadge.className = `niche-badge ${nicheClass[supplier.niche]}`;
+                nicheCell.appendChild(nicheBadge);
+                
+                row.appendChild(nameCell);
+                row.appendChild(urlCell);
+                row.appendChild(nicheCell);
+                
+                tableBody.appendChild(row);
+            });
+        }
+
+        // Initialize best-selling products
+        function initializeBestSellingProducts() {
+            // Cosmetics products
+            const cosmeticsContainer = document.getElementById('cosmetics-products');
+            bestSellingProducts.cosmetics.forEach(product => {
+                const productCard = createProductCard(product);
+                cosmeticsContainer.appendChild(productCard);
+            });
+            
+            // Home products
+            const homeContainer = document.getElementById('home-products');
+            bestSellingProducts.home.forEach(product => {
+                const productCard = createProductCard(product);
+                homeContainer.appendChild(productCard);
+            });
+            
+            // Kids products
+            const kidsContainer = document.getElementById('kids-products');
+            bestSellingProducts.kids.forEach(product => {
+                const productCard = createProductCard(product);
+                kidsContainer.appendChild(productCard);
+            });
+            
+            // Shoes products
+            const shoesContainer = document.getElementById('shoes-products');
+            bestSellingProducts.shoes.forEach(product => {
+                const productCard = createProductCard(product);
+                shoesContainer.appendChild(productCard);
+            });
+            
+            // Electronics products
+            const electronicsContainer = document.getElementById('electronics-products');
+            bestSellingProducts.electronics.forEach(product => {
+                const productCard = createProductCard(product);
+                electronicsContainer.appendChild(productCard);
+            });
+        }
+
+        // Create product card element
+        function createProductCard(product) {
+            const card = document.createElement('div');
+            card.className = 'product-card';
+            
+            const image = document.createElement('div');
+            image.className = `product-image ${nicheBackground[product.niche]}`;
+            image.innerHTML = `<span>${product.icon}</span>`;
+            
+            const info = document.createElement('div');
+            info.className = 'product-info';
+            
+            const name = document.createElement('div');
+            name.className = 'product-name';
+            name.textContent = product.name;
+            
+            const niche = document.createElement('div');
+            niche.className = 'product-niche';
+            niche.textContent = nicheDisplay[product.niche];
+            
+            info.appendChild(name);
+            info.appendChild(niche);
+            
+            card.appendChild(image);
+            card.appendChild(info);
+            
+            return card;
+        }
+
+        // Calculate profitability
+        function calculateProfitability() {
+            const productCost = parseFloat(document.getElementById('product-cost').value) || 0;
+            const taxPercent = parseFloat(document.getElementById('tax-percent').value) || 0;
+            const sellingPrice = parseFloat(document.getElementById('selling-price').value) || 0;
+            
+            // Calculate tax amount
+            const taxAmount = productCost * (taxPercent / 100);
+            
+            // Calculate Shopee fees (20% + R$4 fixed)
+            const shopeePercentageFee = sellingPrice * 0.20;
+            const shopeeFixedFee = 4;
+            const totalShopeeFees = shopeePercentageFee + shopeeFixedFee;
+            
+            // Calculate total costs
+            const totalCosts = productCost + taxAmount + totalShopeeFees;
+            
+            // Calculate contribution margin
+            const contributionMargin = sellingPrice - totalCosts;
+            const marginPercent = (contributionMargin / sellingPrice) * 100;
+            
+            // Calculate ideal ROAS
+            const idealROAS = sellingPrice / (sellingPrice - totalCosts);
+            
+            // Display results
+            document.getElementById('contribution-margin').textContent = `R$ ${contributionMargin.toFixed(2)}`;
+            document.getElementById('margin-percent').textContent = `${marginPercent.toFixed(2)}%`;
+            document.getElementById('shopee-fees').textContent = `R$ ${totalShopeeFees.toFixed(2)}`;
+            document.getElementById('ideal-roas').textContent = idealROAS.toFixed(2);
+            
+            // Update ROAS indicator
+            const roasFill = document.getElementById('roas-fill');
+            const roasPercentage = Math.min(idealROAS / 5 * 100, 100); // Cap at 100%
+            roasFill.style.width = `${roasPercentage}%`;
+            
+            const resultDiv = document.getElementById('calculation-result');
+            resultDiv.style.display = 'block';
+            
+            // Change color based on profitability
+            const profitElement = document.getElementById('contribution-margin');
+            if (contributionMargin > 0) {
+                profitElement.style.color = 'var(--success)';
+            } else {
+                profitElement.style.color = 'var(--danger)';
+            }
+        }
+
+        // Generate content for ads
+        function generateContent() {
+            const productName = document.getElementById('product-name').value;
+            const productNiche = document.getElementById('product-niche').value;
+            
+            if (!productName) {
+                alert('Por favor, insira o nome do produto antes de gerar o conteúdo.');
+                return;
+            }
+            
+            // Generate SEO titles
+            const seoTitles = generateSeoTitles(productName, productNiche);
+            document.getElementById('seo-title-1').textContent = seoTitles[0];
+            document.getElementById('seo-title-2').textContent = seoTitles[1];
+            
+            // Generate product description
+            const description = generateDescription(productName, productNiche);
+            document.getElementById('product-description').innerHTML = description;
+            
+            // Generate Reels caption
+            const reelsCaption = generateReelsCaption(productName, productNiche);
+            document.getElementById('reels-caption').innerHTML = reelsCaption;
+            
+            // Show results
+            document.getElementById('creation-results').style.display = 'block';
+        }
+
+        // Generate SEO titles
+        function generateSeoTitles(productName, niche) {
+            const keywords = nicheKeywords[niche];
+            const randomKeywords = [...keywords].sort(() => 0.5 - Math.random()).slice(0, 3);
+            
+            const title1 = `${productName} | ${randomKeywords.join(' | ')} | Frete Grátis | Shopee`;
+            const title2 = `Compre Agora ${productName} | Melhor Preço | ${randomKeywords.join(' | ')} | Entrega Rápida`;
+            
+            return [title1, title2];
+        }
+
+        // Generate product description
+        function generateDescription(productName, niche) {
+            const benefits = {
+                cosmetics: [
+                    "💄 Realça sua beleza natural",
+                    "✨ Textura leve e confortável",
+                    "🌙 Duração de até 12 horas",
+                    "💧 Fórmula não comedogênica",
+                    "🌿 Livre de parabenos"
+                ],
+                home: [
+                    "🏠 Adicione estilo à sua casa",
+                    "💡 Prático e funcional",
+                    "🎨 Design moderno e elegante",
+                    "🔧 Fácil de instalar e usar",
+                    "🧼 Fácil limpeza e manutenção"
+                ],
+                kids: [
+                    "👶 Conforto para seu pequeno",
+                    "🌈 Cores vibrantes e divertidas",
+                    "🧵 Tecido macio e hipoalergênico",
+                    "🌟 Resistente e durável",
+                    "🎒 Perfeito para o dia a dia"
+                ],
+                shoes: [
+                    "👟 Conforto incomparável",
+                    "💨 Amortecimento de alta qualidade",
+                    "🛡️ Material resistente e durável",
+                    "🌈 Estilos para todos os gostos",
+                    "🌧️ Ideal para diferentes ocasiões"
+                ],
+                electronics: [
+                    "🔌 Tecnologia de ponta",
+                    "⚡ Alta performance",
+                    "📱 Compatível com diversos dispositivos",
+                    "🔋 Longa duração da bateria",
+                    "🎯 Precisão e qualidade"
+                ]
+            };
+            
+            const nicheBenefits = benefits[niche] || benefits.home;
+            const selectedBenefits = [...nicheBenefits].sort(() => 0.5 - Math.random()).slice(0, 3);
+            
+            let description = `
+                <p><strong>${productName}</strong> - A escolha perfeita para quem busca qualidade e estilo! 🎉</p>
+                <br>
+                <p><strong>✨ PRINCIPAIS BENEFÍCIOS:</strong></p>
+                <ul>
+            `;
+            
+            selectedBenefits.forEach(benefit => {
+                description += `<li>${benefit}</li>`;
+            });
+            
+            description += `
+                </ul>
+                <br>
+                <p><strong>📦 ENTREGA RÁPIDA:</strong> Receba em até 5 dias úteis! 🚚</p>
+                <p><strong>💳 FORMAS DE PAGAMENTO:</strong> Cartão (até 12x), Boleto ou PIX! 💰</p>
+                <p><strong>🛡️ GARANTIA:</strong> 30 dias para troca ou devolução! ✅</p>
+                <br>
+                <p>Não perca esta oportunidade! Clique em COMPRAR AGORA e leve para casa! 🛒</p>
+            `;
+            
+            return description;
+        }
+
+        // Generate Reels caption
+        function generateReelsCaption(productName, niche) {
+            const hashtags = {
+                cosmetics: ["#maquiagem", "#beleza", "#make", "#cosmeticos", "#shopee", "#moda", "#estetica"],
+                home: ["#casa", "#decoração", "#organização", "#lar", "#utilidades", "#shopee", "#compras"],
+                kids: ["#infantil", "#kids", "#criança", "#modainfantil", "#shopee", "#fofura", "#baby"],
+                shoes: ["#calçados", "#sapatos", "#tenis", "#moda", "#shopee", "#estilo", "#compras"],
+                electronics: ["#tecnologia", "#eletronicos", "#gadgets", "#shopee", "#inovação", "#techie"]
+            };
+            
+            const nicheHashtags = hashtags[niche] || hashtags.home;
+            const selectedHashtags = [...nicheHashtags].sort(() => 0.5 - Math.random()).slice(0, 5);
+            
+            const captions = [
+                `✨ Descubra o ${productName} que vai revolucionar seu dia a dia! 💫 Clique no link da bio para garantir o seu! 🔗`,
+                `🤩 Você precisa conhecer este ${productName}! Qualidade incrível e preço imbatível! 🎉 Link na bio! 👇`,
+                `🎁 Presenteie-se com o ${productName}! Aproveite esta oferta exclusiva! 💝 Disponível no link da bio! 🔗`
+            ];
+            
+            const randomCaption = captions[Math.floor(Math.random() * captions.length)];
+            
+            return `
+                <p>${randomCaption}</p>
+                <br>
+                <p>${selectedHashtags.join(' ')}</p>
+            `;
+        }
+
+        // Generate review responses
+        function generateReviewResponses() {
+            const reviewType = document.getElementById('review-type').value;
+            const responses = reviewResponses[reviewType];
+            
+            const container = document.getElementById('review-responses');
+            container.innerHTML = '';
+            
+            responses.forEach((response, index) => {
+                const responseElement = document.createElement('div');
+                responseElement.className = `review-response review-type-${reviewType}`;
+                
+                const header = document.createElement('div');
+                header.className = 'review-response-header';
+                
+                const title = document.createElement('h4');
+                title.textContent = `Resposta ${index + 1}`;
+                
+                const copyButton = document.createElement('button');
+                copyButton.className = 'review-copy-btn';
+                copyButton.innerHTML = '<i class="fas fa-copy"></i> Copiar';
+                copyButton.setAttribute('data-text', response);
+                
+                const content = document.createElement('div');
+                content.className = 'review-response-content';
+                content.textContent = response;
+                
+                header.appendChild(title);
+                header.appendChild(copyButton);
+                responseElement.appendChild(header);
+                responseElement.appendChild(content);
+                
+                container.appendChild(responseElement);
+            });
+            
+            document.getElementById('review-responses-container').style.display = 'block';
+        }
+
+        // Add ad product to maintenance table
+        function addAdProduct() {
+            const productName = document.getElementById('ad-product-name').value;
+            const targetROAS = parseFloat(document.getElementById('target-roas').value) || 0;
+            const achievedROAS = parseFloat(document.getElementById('achieved-roas').value) || 0;
+            const ctr = parseFloat(document.getElementById('ctr').value) || 0;
+            const investment = parseFloat(document.getElementById('investment').value) || 0;
+            
+            if (!productName) {
+                alert('Por favor, insira o nome do produto.');
+                return;
+            }
+            
+            const product = {
+                id: Date.now(),
+                name: productName,
+                targetROAS: targetROAS,
+                achievedROAS: achievedROAS,
+                ctr: ctr,
+                investment: investment
+            };
+            
+            adProducts.push(product);
+            updateAdProductsTable();
+            calculateROASSuggestions(product);
+            
+            // Clear form
+            document.getElementById('ad-product-name').value = '';
+            document.getElementById('target-roas').value = '';
+            document.getElementById('achieved-roas').value = '';
+            document.getElementById('ctr').value = '';
+            document.getElementById('investment').value = '';
+        }
+
+        // Update ad products table
+        function updateAdProductsTable() {
+            const tableBody = document.getElementById('ad-products-body');
+            tableBody.innerHTML = '';
+            
+            adProducts.forEach(product => {
+                const row = document.createElement('tr');
+                
+                const nameCell = document.createElement('td');
+                nameCell.textContent = product.name;
+                
+                const targetROASCell = document.createElement('td');
+                targetROASCell.textContent = product.targetROAS;
+                
+                const achievedROASCell = document.createElement('td');
+                achievedROASCell.textContent = product.achievedROAS;
+                
+                const ctrCell = document.createElement('td');
+                ctrCell.textContent = `${product.ctr}%`;
+                
+                const investmentCell = document.createElement('td');
+                investmentCell.textContent = `R$ ${product.investment.toFixed(2)}`;
+                
+                const actionsCell = document.createElement('td');
+                const deleteButton = document.createElement('button');
+                deleteButton.innerHTML = '<i class="fas fa-trash"></i>';
+                deleteButton.className = 'copy-btn';
+                deleteButton.addEventListener('click', () => deleteAdProduct(product.id));
+                actionsCell.appendChild(deleteButton);
+                
+                row.appendChild(nameCell);
+                row.appendChild(targetROASCell);
+                row.appendChild(achievedROASCell);
+                row.appendChild(ctrCell);
+                row.appendChild(investmentCell);
+                row.appendChild(actionsCell);
+                
+                tableBody.appendChild(row);
+            });
+        }
+
+        // Delete ad product
+        function deleteAdProduct(id) {
+            adProducts = adProducts.filter(product => product.id !== id);
+            updateAdProductsTable();
+        }
+
+        // Calculate ROAS suggestions
+        function calculateROASSuggestions(product) {
+            const achievedROAS = product.achievedROAS;
+            
+            // Calculate suggestions
+            const increaseSalesROAS = achievedROAS * 0.85; // 15% lower for more aggressive spending
+            const saveMoneyROAS = achievedROAS * 1.15; // 15% higher for more conservative spending
+            
+            // Calculate budget adjustments
+            const increaseBudgetPercent = 20; // Increase budget by 20% for sales growth
+            const decreaseBudgetPercent = 15; // Decrease budget by 15% for savings
+            
+            // Update UI
+            document.getElementById('increase-sales-roas').textContent = increaseSalesROAS.toFixed(2);
+            document.getElementById('save-money-roas').textContent = saveMoneyROAS.toFixed(2);
+            document.getElementById('increase-budget').textContent = `${increaseBudgetPercent}%`;
+            document.getElementById('decrease-budget').textContent = `${decreaseBudgetPercent}%`;
+            
+            // Show suggestions container
+            document.getElementById('roas-suggestions-container').style.display = 'block';
+        }
+
+        // Export ad products report
+        function exportReport() {
+            if (adProducts.length === 0) {
+                alert('Não há produtos para exportar.');
+                return;
+            }
+            
+            let report = "RELATÓRIO DE MANUTENÇÃO DE ANÚNCIOS - SHOPEE\n";
+            report += "===============================================\n\n";
+            
+            adProducts.forEach(product => {
+                report += `PRODUTO: ${product.name}\n`;
+                report += `ROAS Alvo: ${product.targetROAS}\n`;
+                report += `ROAS Alcançado: ${product.achievedROAS}\n`;
+                report += `CTR: ${product.ctr}%\n`;
+                report += `Investimento: R$ ${product.investment.toFixed(2)}\n`;
+                
+                // Calculate suggestions for this product
+                const increaseSalesROAS = product.achievedROAS * 0.85;
+                const saveMoneyROAS = product.achievedROAS * 1.15;
+                
+                report += `\nSUGESTÕES DE AJUSTE:\n`;
+                report += `- Para aumentar vendas: ROAS ${increaseSalesROAS.toFixed(2)} (aumentar orçamento em 20%)\n`;
+                report += `- Para economizar: ROAS ${saveMoneyROAS.toFixed(2)} (reduzir orçamento em 15%)\n`;
+                report += `\n${'-'.repeat(50)}\n\n`;
+            });
+            
+            report += "RECOMENDAÇÕES GERAIS:\n";
+            report += "- Ajuste o ROAS alvo semanalmente com base no desempenho\n";
+            report += "- Monitore o CTR para identificar anúncios com baixo engajamento\n";
+            report += "- Teste diferentes orçamentos para encontrar o ponto ideal\n";
+            report += "- Considere pausar anúncios com ROAS consistentemente abaixo do alvo\n\n";
+            
+            report += "Relatório gerado em: " + new Date().toLocaleDateString('pt-BR');
+            
+            // Create and download file
+            const blob = new Blob([report], { type: 'text/plain' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'relatorio_anuncios_shopee.txt';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        }
+
+        // Copy text to clipboard
+        function copyToClipboard(text) {
+            navigator.clipboard.writeText(text).then(() => {
+                alert('Texto copiado para a área de transferência!');
+            }).catch(err => {
+                console.error('Erro ao copiar texto: ', err);
+            });
+        }
+
+        // Filter suppliers by niche
+        function filterSuppliers() {
+            const filterValue = document.getElementById('niche-filter').value;
+            const tableBody = document.getElementById('suppliers-body');
+            tableBody.innerHTML = '';
+            
+            const filteredSuppliers = filterValue === 'all' 
+                ? suppliers 
+                : suppliers.filter(supplier => supplier.niche === filterValue);
+            
+            filteredSuppliers.forEach(supplier => {
+                const row = document.createElement('tr');
+                
+                const nameCell = document.createElement('td');
+                nameCell.textContent = supplier.name;
+                
+                const urlCell = document.createElement('td');
+                const link = document.createElement('a');
+                link.href = supplier.url;
+                link.innerHTML = '<i class="fas fa-external-link-alt"></i> Visitar Site';
+                link.className = 'supplier-link';
+                link.target = '_blank';
+                urlCell.appendChild(link);
+                
+                const nicheCell = document.createElement('td');
+                const nicheBadge = document.createElement('span');
+                nicheBadge.textContent = nicheDisplay[supplier.niche];
+                nicheBadge.className = `niche-badge ${nicheClass[supplier.niche]}`;
+                nicheCell.appendChild(nicheBadge);
+                
+                row.appendChild(nameCell);
+                row.appendChild(urlCell);
+                row.appendChild(nicheCell);
+                
+                tableBody.appendChild(row);
+            });
+        }
+
+        // Reset checklist
+        function resetChecklist() {
+            const checkboxes = document.querySelectorAll('#checklist input[type="checkbox"]');
+            checkboxes.forEach(checkbox => {
+                checkbox.checked = false;
+            });
+        }
+
+        // Tab switching functionality
+        function initializeTabs() {
+            const tabs = document.querySelectorAll('.tab');
+            const tabContents = document.querySelectorAll('.tab-content');
+            
+            tabs.forEach(tab => {
+                tab.addEventListener('click', () => {
+                    // Remove active class from all tabs and contents
+                    tabs.forEach(t => t.classList.remove('active'));
+                    tabContents.forEach(c => c.classList.remove('active'));
+                    
+                    // Add active class to clicked tab and corresponding content
+                    tab.classList.add('active');
+                    const tabId = tab.getAttribute('data-tab');
+                    document.getElementById(tabId).classList.add('active');
+                });
+            });
+        }
+
+        // Initialize the application
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeSuppliersTable();
+            initializeBestSellingProducts();
+            initializeTabs();
+            
+            // Event listeners
+            document.getElementById('niche-filter').addEventListener('change', filterSuppliers);
+            document.getElementById('calculate-btn').addEventListener('click', calculateProfitability);
+            document.getElementById('generate-btn').addEventListener('click', generateContent);
+            document.getElementById('generate-review-btn').addEventListener('click', generateReviewResponses);
+            document.getElementById('add-ad-btn').addEventListener('click', addAdProduct);
+            document.getElementById('export-btn').addEventListener('click', exportReport);
+            document.getElementById('reset-checklist').addEventListener('click', resetChecklist);
+            
+            // Copy buttons - Fixed implementation
+            document.addEventListener('click', function(e) {
+                // Handle copy buttons in creation tab
+                if (e.target.closest('.copy-btn') && e.target.closest('.copy-btn').hasAttribute('data-target')) {
+                    const button = e.target.closest('.copy-btn');
+                    const targetId = button.getAttribute('data-target');
+                    
+                    let textToCopy = '';
+                    if (targetId === 'seo-title-1') {
+                        textToCopy = document.getElementById('seo-title-1').textContent;
+                    } else if (targetId === 'product-description') {
+                        textToCopy = document.getElementById('product-description').textContent;
+                    } else if (targetId === 'reels-caption') {
+                        textToCopy = document.getElementById('reels-caption').textContent;
+                    }
+                    
+                    copyToClipboard(textToCopy);
+                }
+                
+                // Handle copy buttons in reviews tab
+                if (e.target.closest('.review-copy-btn')) {
+                    const button = e.target.closest('.review-copy-btn');
+                    const textToCopy = button.getAttribute('data-text');
+                    copyToClipboard(textToCopy);
+                }
+            });
+        });
+    </script>
+</body>
+</html>
