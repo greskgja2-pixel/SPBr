@@ -11,17 +11,11 @@
 </head>
 <body>
   <div id="toast" class="toast" aria-live="polite"></div>
-
   <header class="topbar">
-    <div class="brand">
-      <div class="brand-mark">G</div>
-      <div>
-        <h1>Garimpeiro da Shopee</h1>
-        <p>Fornecedor × Shopee</p>
-      </div>
-    </div>
+    <div class="brand"><div class="brand-mark">G</div><div><h1>Garimpeiro da Shopee</h1><p>Fornecedores × Shopee</p></div></div>
     <div class="top-actions">
       <a class="btn btn-ghost" href="./ajuda.html" style="text-decoration:none">❓ Como funciona</a>
+      <button id="btnBackup" class="btn btn-ghost">💾 Dados e Backup</button>
       <button id="btnSettings" class="btn btn-ghost">⚙ Configurações</button>
       <button id="btnGeneratePdf" class="btn btn-primary">🛒 Gerar Lista de Compra</button>
     </div>
@@ -29,129 +23,48 @@
 
   <main class="shell">
     <section class="hero">
-      <div>
-        <span class="eyebrow">GARIMPO DE OPORTUNIDADES</span>
-        <h2>Compare fornecedor, concorrência e margem em um só lugar.</h2>
-        <p>Importe seus catálogos, encontre produtos semelhantes, analise preços e vendas e marque o que realmente vale a pena comprar. Para atualizar um produto, envie um print ou cole com Ctrl+V a primeira página da busca da Shopee e deixe a IA ler os anúncios visíveis.</p>
-      </div>
-      <div class="hero-flow" aria-label="Fluxo do sistema">
-        <span>Planilhas</span><b>→</b><span>Similaridade</span><b>→</b><span>Shopee</span><b>→</b><span>Margem</span><b>→</b><span>Compra</span>
-      </div>
+      <div><span class="eyebrow">GARIMPO DE OPORTUNIDADES</span><h2>Compare fornecedores, concorrência e margem em um só lugar.</h2><p>Acumule catálogos de vários fornecedores, encontre produtos semelhantes na sua base Shopee e atualize preços atuais por print e IA.</p></div>
+      <div class="hero-flow" aria-label="Fluxo do sistema"><span>Fornecedores</span><b>→</b><span>Similaridade</span><b>→</b><span>Print Shopee</span><b>→</b><span>Margem</span><b>→</b><span>Compra</span></div>
     </section>
 
     <section class="panel upload-panel">
-      <div class="panel-head">
-        <div>
-          <h3>1. Importar dados</h3>
-          <p>Use sempre duas planilhas: <strong>Catálogo do Fornecedor</strong> (nome, custo e link) e <strong>Catálogo Shopee</strong> (preços, vendidos e links).</p>
-        </div>
-        <button id="btnRestore" class="btn btn-ghost">↻ Restaurar última sessão</button>
+      <div class="panel-head"><div><h3>1. Importar dados</h3><p>O catálogo de fornecedor é cumulativo: informe o nome e importe quantos fornecedores quiser.</p></div><button id="btnRestore" class="btn btn-ghost">↻ Restaurar última sessão</button></div>
+      <div class="supplier-upload-meta">
+        <label class="field"><span>Nome do fornecedor deste catálogo</span><input id="supplierName" type="text" maxlength="80" placeholder="Ex.: Luiz Eletrônicos"></label>
+        <div class="supplier-hint">O nome fica gravado em cada produto e será usado no filtro de fornecedor, nos backups e na lista de compra.</div>
       </div>
       <div class="upload-grid">
-        <label class="dropzone" id="dropLuiz">
-          <input id="fileLuiz" type="file" accept=".xlsx,.xls,.csv" hidden />
-          <span class="drop-icon">📦</span>
-          <strong>Catálogo do Fornecedor</strong>
-          <small id="luizStatus">Clique ou arraste o arquivo XLSX/CSV</small>
-        </label>
-        <label class="dropzone" id="dropShopee">
-          <input id="fileShopee" type="file" accept=".xlsx,.xls,.csv" hidden />
-          <span class="drop-icon">🛍️</span>
-          <strong>Catálogo Shopee</strong>
-          <small id="shopeeStatus">Clique ou arraste o arquivo XLSX/CSV</small>
-        </label>
+        <label class="dropzone" id="dropLuiz"><input id="fileLuiz" type="file" accept=".xlsx,.xls,.csv" hidden /><span class="drop-icon">📦</span><strong>Adicionar catálogo de fornecedor</strong><small id="luizStatus">Informe o fornecedor acima e clique para importar XLSX/CSV</small></label>
+        <label class="dropzone" id="dropShopee"><input id="fileShopee" type="file" accept=".xlsx,.xls,.csv" hidden /><span class="drop-icon">🛍️</span><strong>Catálogo Shopee</strong><small id="shopeeStatus">Clique ou arraste o arquivo XLSX/CSV</small></label>
       </div>
-      <div class="upload-actions">
-        <label class="field compact-field">
-          <span>Compatibilidade mínima</span>
-          <div class="suffix-input"><input id="matchThreshold" type="number" min="40" max="100" step="1" value="70"><span>%</span></div>
-        </label>
-        <button id="btnAnalyze" class="btn btn-primary btn-lg" disabled>⚡ Comparar e analisar produtos</button>
-      </div>
-      <div id="progressWrap" class="progress-wrap hidden">
-        <div class="progress-track"><div id="progressBar" class="progress-bar"></div></div>
-        <p id="progressText">Preparando análise...</p>
-      </div>
+      <div class="upload-actions"><label class="field compact-field"><span>Compatibilidade mínima</span><div class="suffix-input"><input id="matchThreshold" type="number" min="40" max="100" step="1" value="70"><span>%</span></div></label><button id="btnAnalyze" class="btn btn-primary btn-lg" disabled>⚡ Comparar e analisar produtos</button></div>
+      <div id="progressWrap" class="progress-wrap hidden"><div class="progress-track"><div id="progressBar" class="progress-bar"></div></div><p id="progressText">Preparando análise...</p></div>
     </section>
 
-    <section class="metrics" id="metrics">
-      <article class="metric"><span>Produtos fornecedor</span><strong id="mLuiz">0</strong><small>importados</small></article>
-      <article class="metric"><span>Correspondências</span><strong id="mMatches">0</strong><small>compatibilidade aprovada</small></article>
-      <article class="metric"><span>Vale a pena</span><strong id="mYes">0</strong><small>selecionados por você</small></article>
-      <article class="metric"><span>Não vale</span><strong id="mNo">0</strong><small>descartados</small></article>
-      <article class="metric"><span>Lucro médio</span><strong id="mProfit">R$ 0,00</strong><small>cenário preço médio</small></article>
-    </section>
+    <section class="metrics" id="metrics"><article class="metric"><span>Produtos fornecedor</span><strong id="mLuiz">0</strong><small>catálogo acumulado</small></article><article class="metric"><span>Correspondências</span><strong id="mMatches">0</strong><small>compatibilidade aprovada</small></article><article class="metric"><span>Vale a pena</span><strong id="mYes">0</strong><small>selecionados por você</small></article><article class="metric"><span>Não vale</span><strong id="mNo">0</strong><small>descartados</small></article><article class="metric"><span>Lucro médio</span><strong id="mProfit">R$ 0,00</strong><small>cenário preço médio</small></article></section>
 
     <section class="panel workspace-panel">
-      <div class="panel-head wrap-head">
-        <div>
-          <h3>2. Garimpo de oportunidades</h3>
-          <p id="resultsCaption">Importe os dois arquivos para começar.</p>
-        </div>
-        <div class="toolbar-actions">
-          <button id="btnExportCsv" class="btn btn-ghost" disabled>⇩ CSV</button>
-          <button id="btnClear" class="btn btn-danger-ghost">🗑 Limpar</button>
-        </div>
-      </div>
-
+      <div class="panel-head wrap-head"><div><h3>2. Garimpo de oportunidades</h3><p id="resultsCaption">Importe os dados para começar.</p></div><div class="toolbar-actions"><button id="btnExportCsv" class="btn btn-ghost" disabled>⇩ CSV</button><button id="btnClear" class="btn btn-danger-ghost">🗑 Limpar</button></div></div>
       <div class="filters">
         <label class="field search-field"><span>Buscar produto</span><input id="searchInput" type="search" placeholder="Ex.: controle remoto Samsung"></label>
+        <label class="field"><span>Fornecedor</span><select id="supplierFilter"><option value="all">Todos os fornecedores</option></select></label>
         <label class="field"><span>Categoria</span><select id="categoryFilter"><option value="all">Todas as categorias</option></select></label>
         <label class="field"><span>Decisão</span><select id="decisionFilter"><option value="all">Todas</option><option value="yes">Vale a pena</option><option value="no">Não vale</option><option value="pending">Não decidido</option></select></label>
         <label class="field"><span>Tipo</span><select id="typeFilter"><option value="all">Unidade + kits</option><option value="unit">Unidade</option><option value="kit">Com kits encontrados</option></select></label>
         <label class="field"><span>Margem média</span><select id="marginFilter"><option value="all">Qualquer</option><option value="positive">Positiva</option><option value="10">≥ 10%</option><option value="20">≥ 20%</option><option value="30">≥ 30%</option></select></label>
         <label class="field"><span>Ordenar</span><select id="sortBy"><option value="profit-desc">Maior lucro médio</option><option value="margin-desc">Maior margem média</option><option value="sold-desc">Mais vendidos</option><option value="score-desc">Maior compatibilidade</option><option value="cost-asc">Menor custo</option><option value="name-asc">Nome A–Z</option></select></label>
       </div>
-
-      <div id="emptyState" class="empty-state">
-        <div>📊</div>
-        <h4>Nenhuma análise ainda</h4>
-        <p>Depois da importação, os produtos compatíveis aparecerão aqui com preço, vendas e margem.</p>
-      </div>
-
-      <div id="tableWrap" class="table-wrap hidden">
-        <table>
-          <thead>
-            <tr>
-              <th>Produto</th>
-              <th>Custo</th>
-              <th>Preço Shopee</th>
-              <th>Vendas</th>
-              <th>Lucro / Margem</th>
-              <th>Links</th>
-              <th>Sua decisão</th>
-            </tr>
-          </thead>
-          <tbody id="resultsBody"></tbody>
-        </table>
-      </div>
-      <div class="pagination hidden" id="pagination">
-        <button id="prevPage" class="btn btn-ghost">← Anterior</button>
-        <span id="pageInfo"></span>
-        <button id="nextPage" class="btn btn-ghost">Próxima →</button>
-      </div>
+      <div id="emptyState" class="empty-state"><div>📊</div><h4>Nenhuma análise ainda</h4><p>Depois da importação, os produtos compatíveis aparecerão aqui com preço, vendas e margem.</p></div>
+      <div id="tableWrap" class="table-wrap hidden"><table><thead><tr><th>Produto</th><th>Custo</th><th>Preço Shopee</th><th>Vendas</th><th>Lucro / Margem</th><th>Links</th><th>Sua decisão</th></tr></thead><tbody id="resultsBody"></tbody></table></div>
+      <div class="pagination hidden" id="pagination"><button id="prevPage" class="btn btn-ghost">← Anterior</button><span id="pageInfo"></span><button id="nextPage" class="btn btn-ghost">Próxima →</button></div>
     </section>
   </main>
 
-  <div class="modal-backdrop hidden" id="settingsModal">
-    <section class="modal" role="dialog" aria-modal="true" aria-labelledby="settingsTitle">
-      <div class="modal-head"><div><h3 id="settingsTitle">Configurações de lucro</h3><p>Altere as taxas e todos os produtos serão recalculados.</p></div><button class="icon-btn" data-close="settingsModal">✕</button></div>
-      <div class="form-grid">
-        <label class="field"><span>Taxa variável Shopee</span><div class="suffix-input"><input id="feePct" type="number" min="0" max="100" step="0.1"><span>%</span></div></label>
-        <label class="field"><span>Taxa fixa por venda</span><div class="prefix-input"><span>R$</span><input id="feeFixed" type="number" min="0" step="0.01"></div></label>
-        <label class="field"><span>Embalagem</span><div class="prefix-input"><span>R$</span><input id="packCost" type="number" min="0" step="0.01"></div></label>
-        <label class="field"><span>Outros custos</span><div class="prefix-input"><span>R$</span><input id="otherCost" type="number" min="0" step="0.01"></div></label>
-      </div>
-      <div class="modal-actions"><button class="btn btn-ghost" data-close="settingsModal">Cancelar</button><button id="saveSettings" class="btn btn-primary">Salvar e recalcular</button></div>
-    </section>
-  </div>
+  <div class="modal-backdrop hidden" id="settingsModal"><section class="modal" role="dialog" aria-modal="true" aria-labelledby="settingsTitle"><div class="modal-head"><div><h3 id="settingsTitle">Configurações de lucro</h3><p>Altere as taxas e todos os produtos serão recalculados.</p></div><button class="icon-btn" data-close="settingsModal">✕</button></div><div class="form-grid"><label class="field"><span>Taxa variável Shopee</span><div class="suffix-input"><input id="feePct" type="number" min="0" max="100" step="0.1"><span>%</span></div></label><label class="field"><span>Taxa fixa por venda</span><div class="prefix-input"><span>R$</span><input id="feeFixed" type="number" min="0" step="0.01"></div></label><label class="field"><span>Embalagem</span><div class="prefix-input"><span>R$</span><input id="packCost" type="number" min="0" step="0.01"></div></label><label class="field"><span>Outros custos</span><div class="prefix-input"><span>R$</span><input id="otherCost" type="number" min="0" step="0.01"></div></label></div><div class="modal-actions"><button class="btn btn-ghost" data-close="settingsModal">Cancelar</button><button id="saveSettings" class="btn btn-primary">Salvar e recalcular</button></div></section></div>
 
-  <div class="modal-backdrop hidden" id="detailModal">
-    <section class="modal modal-wide" role="dialog" aria-modal="true" aria-labelledby="detailTitle">
-      <div class="modal-head"><div><h3 id="detailTitle">Detalhes do produto</h3><p id="detailSubtitle"></p></div><button class="icon-btn" data-close="detailModal">✕</button></div>
-      <div id="detailContent"></div>
-    </section>
-  </div>
+  <div class="modal-backdrop hidden" id="detailModal"><section class="modal modal-wide" role="dialog" aria-modal="true" aria-labelledby="detailTitle"><div class="modal-head"><div><h3 id="detailTitle">Detalhes do produto</h3><p id="detailSubtitle"></p></div><button class="icon-btn" data-close="detailModal">✕</button></div><div id="detailContent"></div></section></div>
+
+  <div class="modal-backdrop hidden" id="backupModal"><section class="modal" role="dialog" aria-modal="true" aria-labelledby="backupTitle"><div class="modal-head"><div><h3 id="backupTitle">💾 Dados e Backup</h3><p>Exporte todo o trabalho e restaure depois neste ou em outro navegador.</p></div><button id="closeBackup" class="icon-btn">✕</button></div><div class="backup-stats"><div class="backup-stat"><small>Fornecedores</small><strong id="backupSuppliers">0</strong></div><div class="backup-stat"><small>Produtos</small><strong id="backupProducts">0</strong></div><div class="backup-stat"><small>Anúncios Shopee</small><strong id="backupShopee">0</strong></div><div class="backup-stat"><small>Análises</small><strong id="backupAnalyses">0</strong></div></div><div class="backup-box"><strong>Exportar tudo</strong><p>Cria um arquivo JSON com catálogos de fornecedores, base Shopee, resultados do garimpo, análises da IA, decisões, observações, taxas e histórico de atualização de custo. Chaves de API não são exportadas.</p><div class="backup-actions"><button id="btnExportBackup" class="btn btn-primary">⬇ Exportar backup completo</button></div></div><div class="backup-box"><strong>Importar backup</strong><p>Restaura um backup do Garimpeiro. Os dados atuais deste navegador serão substituídos após sua confirmação.</p><div class="backup-actions"><button id="btnImportBackup" class="btn btn-ghost">⬆ Importar backup</button><input id="backupFile" type="file" accept="application/json,.json" hidden></div></div></section></div>
 
   <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
   <script src="./parser-fix.js"></script>
@@ -161,5 +74,6 @@
   <script src="./ai-addon.js"></script>
   <script src="./supplier-image-addon.js"></script>
   <script src="./category-filter.js"></script>
+  <script src="./supplier-manager-addon.js"></script>
 </body>
 </html>
