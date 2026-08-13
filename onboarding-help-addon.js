@@ -3,181 +3,22 @@
 const SESSION='radar-session';
 const $=id=>document.getElementById(id);
 const readSession=()=>{try{return JSON.parse(localStorage.getItem(SESSION)||'null')||{luiz:[],shop:[],results:[]}}catch{return{luiz:[],shop:[],results:[]}}};
-const esc=s=>String(s||'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const esc=s=>String(s||'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot',"'":'&#39;'}[c]));
 let activePopover=null;
-
-function addCss(){
-  if($('onboardingHelpCss'))return;
-  const s=document.createElement('style');
-  s.id='onboardingHelpCss';
-  s.textContent=`
-  .oh-help-dot{width:22px;height:22px;min-width:22px;border-radius:999px;border:1px solid #5d512c;background:#15140f;color:#e8c65b;font:800 12px/1 system-ui;display:inline-grid;place-items:center;cursor:pointer;vertical-align:middle;transition:.16s;box-shadow:none;padding:0}
-  .oh-help-dot:hover{border-color:#d4af37;background:#211d0d;transform:translateY(-1px)}
-  .oh-help-dot:focus-visible{outline:2px solid #d4af37;outline-offset:2px}
-  .oh-help-float{position:absolute;top:9px;right:9px;z-index:4}
-  .metric{position:relative}
-  .dropzone{position:relative}
-  .dropzone>.oh-help-dot{position:absolute;right:12px;top:12px;z-index:5}
-  .oh-help-pair{display:inline-flex;align-items:center;gap:7px}
-  .oh-label-with-help{display:inline-flex!important;align-items:center;gap:6px}
-  .oh-popover{position:fixed;z-index:1000;width:min(330px,calc(100vw - 24px));background:#141414;border:1px solid #4a4124;border-radius:13px;padding:13px 14px 14px;box-shadow:0 18px 45px #000c;color:#fff;animation:ohPop .14s ease-out}
-  .oh-popover:before{content:'';position:absolute;width:9px;height:9px;background:#141414;border-left:1px solid #4a4124;border-top:1px solid #4a4124;transform:rotate(45deg);top:-5px;left:var(--arrow-left,26px)}
-  .oh-popover.oh-above:before{top:auto;bottom:-5px;transform:rotate(225deg)}
-  .oh-pop-head{display:flex;align-items:flex-start;justify-content:space-between;gap:10px;margin-bottom:7px}
-  .oh-pop-head strong{font-size:13px;color:#f4d76f}
-  .oh-pop-close{width:25px;height:25px;border-radius:7px;border:1px solid #333;background:#191919;color:#aaa;cursor:pointer;padding:0}
-  .oh-popover p{margin:0;color:#b9b6ad;font-size:12px;line-height:1.55}
-  .oh-popover b{color:#e7e2d5}
-  @keyframes ohPop{from{opacity:0;transform:translateY(-4px)}to{opacity:1;transform:translateY(0)}}
-  .oh-loader{position:absolute;inset:0;z-index:20;border-radius:inherit;background:rgba(9,14,11,.92);display:none;align-items:center;justify-content:center;flex-direction:column;gap:8px;text-align:center;padding:14px;backdrop-filter:blur(2px)}
-  .oh-loading .oh-loader{display:flex}
-  .oh-gear{font-size:34px;line-height:1;animation:ohSpin 1.05s linear infinite;filter:drop-shadow(0 0 8px #d4af3744)}
-  .oh-loader strong{font-size:13px;color:#f1e5bb}
-  .oh-loader small{font-size:11px;color:#aaa69d}
-  @keyframes ohSpin{to{transform:rotate(360deg)}}
-  .oh-metrics-reveal{animation:ohMetrics .28s ease-out}
-  @keyframes ohMetrics{from{opacity:0;transform:translateY(-7px)}to{opacity:1;transform:none}}
-  @media(max-width:720px){.oh-popover{left:12px!important;right:12px!important;top:auto!important;bottom:18px!important;width:auto}.oh-popover:before{display:none}}
-  `;
-  document.head.appendChild(s);
-}
-
-function closePopover(){
-  if(activePopover){activePopover.remove();activePopover=null}
-}
-
-function showPopover(anchor,title,text){
-  closePopover();
-  const d=document.createElement('div');
-  d.className='oh-popover';
-  d.setAttribute('role','dialog');
-  d.setAttribute('aria-label',title);
-  d.innerHTML=`<div class="oh-pop-head"><strong>${esc(title)}</strong><button class="oh-pop-close" type="button" aria-label="Fechar">✕</button></div><p>${text}</p>`;
-  document.body.appendChild(d);
-  activePopover=d;
-  const r=anchor.getBoundingClientRect(),w=d.offsetWidth,h=d.offsetHeight;
-  let left=Math.max(12,Math.min(innerWidth-w-12,r.left+r.width/2-w/2));
-  let top=r.bottom+9;
-  if(top+h>innerHeight-12){top=Math.max(12,r.top-h-9);d.classList.add('oh-above')}
-  d.style.left=`${left}px`;
-  d.style.top=`${top}px`;
-  d.style.setProperty('--arrow-left',`${Math.max(14,Math.min(w-22,r.left+r.width/2-left-5))}px`);
-  d.querySelector('.oh-pop-close').onclick=closePopover;
-  setTimeout(()=>document.addEventListener('pointerdown',outside,{once:true}),0);
-  function outside(e){if(activePopover&&activePopover.contains(e.target)){setTimeout(()=>document.addEventListener('pointerdown',outside,{once:true}),0);return}closePopover()}
-}
-
-function helpButton(title,text,extra=''){
-  const b=document.createElement('button');
-  b.type='button';
-  b.className=`oh-help-dot ${extra}`.trim();
-  b.textContent='?';
-  b.title=`Ajuda: ${title}`;
-  b.setAttribute('aria-label',`Ajuda sobre ${title}`);
-  b.addEventListener('click',e=>{e.preventDefault();e.stopPropagation();showPopover(b,title,text)});
-  return b;
-}
-
-const metricHelp={
-  'Produtos fornecedor':['Produtos do fornecedor','Mostra quantos produtos de <b>todos os fornecedores</b> estão salvos no catálogo acumulado deste navegador. Novos catálogos podem ser adicionados sem apagar os anteriores.'],
-  'Correspondências':['Correspondências','Quantidade de produtos que já passaram pelo garimpo e atingiram a compatibilidade necessária para serem comparados com a base da Shopee.'],
-  'Vale a pena':['Vale a pena','Conta os produtos que você marcou manualmente como <b>Vale a pena</b>. Eles podem entrar na sua lista de compra.'],
-  'Não vale':['Não vale','Conta os produtos que você descartou manualmente. A decisão é sua e pode ser alterada depois.'],
-  'Lucro médio':['Lucro médio','Média do lucro calculado no cenário de <b>preço médio de venda</b>, usando custo do fornecedor, taxas da Shopee, embalagem e outros custos configurados.']
-};
-
-function decorateMetricCards(){
-  document.querySelectorAll('#metrics .metric').forEach(card=>{
-    if(card.querySelector('.oh-help-dot'))return;
-    const label=card.querySelector('span')?.textContent.trim();
-    const cfg=metricHelp[label];
-    if(!cfg)return;
-    card.appendChild(helpButton(cfg[0],cfg[1],'oh-help-float'));
-  });
-}
-
-function wrapWithHelp(el,title,text){
-  if(!el||el.dataset.ohHelp)return;
-  el.dataset.ohHelp='1';
-  const parent=el.parentNode,wrap=document.createElement('span');
-  wrap.className='oh-help-pair';
-  parent.insertBefore(wrap,el);wrap.appendChild(el);wrap.appendChild(helpButton(title,text));
-}
-
-function decorateControls(){
-  wrapWithHelp($('btnRestore'),'Restaurar última sessão','Recupera os dados salvos <b>neste navegador</b>: catálogos, produtos, resultados e decisões da sessão anterior. Não baixa dados de uma conta na nuvem.');
-  const compact=document.querySelector('.compact-field');
-  if(compact&&!compact.dataset.ohHelp){
-    compact.dataset.ohHelp='1';
-    const label=compact.querySelector(':scope > span');
-    if(label){label.classList.add('oh-label-with-help');label.appendChild(helpButton('Compatibilidade mínima','Define o quanto os nomes/modelos precisam se parecer para o Garimpeiro considerar uma correspondência. <b>Valor maior = menos resultados e mais rigor.</b> Valor menor = mais candidatos, mas exige mais conferência manual.'))}
-  }
-  const sup=$('dropLuiz');
-  if(sup&&!sup.querySelector(':scope > .oh-help-dot'))sup.appendChild(helpButton('Adicionar catálogo de fornecedor','Primeiro informe o nome do fornecedor. Depois selecione a planilha XLSX/CSV. O catálogo é <b>cumulativo</b>: você pode adicionar vários fornecedores e o Garimpeiro mantém os produtos já salvos.'));
-  const sh=$('dropShopee');
-  if(sh&&!sh.querySelector(':scope > .oh-help-dot'))sh.appendChild(helpButton('Catálogo Shopee','Importa uma base de anúncios da Shopee para o primeiro garimpo de correspondências. Depois, o preço atual de cada oportunidade pode ser conferido pelo print e análise da IA.'));
-}
-
-function ensureLoader(drop,id){
-  if(!drop||drop.querySelector('.oh-loader'))return;
-  const d=document.createElement('div');d.className='oh-loader';d.id=id;
-  d.innerHTML='<div class="oh-gear">⚙️</div><strong>Carregando planilha...</strong><small>Aguarde enquanto o Garimpeiro lê e organiza os dados.</small>';
-  drop.appendChild(d);
-}
-
-function loading(drop,on,label){
-  if(!drop)return;
-  drop.classList.toggle('oh-loading',!!on);
-  drop.setAttribute('aria-busy',on?'true':'false');
-  const strong=drop.querySelector('.oh-loader strong');if(strong&&label)strong.textContent=label;
-}
-
-function watchImport(buttonId,inputId,dropId,label){
-  const btn=$(buttonId),input=$(inputId),drop=$(dropId);
-  if(!btn||!input||!drop||btn.dataset.ohLoading)return;
-  btn.dataset.ohLoading='1';
-  btn.addEventListener('click',()=>{
-    if(btn.disabled||!input.files?.length)return;
-    if(inputId==='fileLuiz'&&!String($('supplierName')?.value||'').trim())return;
-    loading(drop,true,label);
-    const started=Date.now();
-    const poll=()=>{
-      if(!document.body.contains(drop))return;
-      if(!input.value){setTimeout(()=>loading(drop,false),220);return}
-      if(Date.now()-started>45000){loading(drop,false);return}
-      setTimeout(poll,120);
-    };
-    setTimeout(poll,120);
-  },true);
-}
-
-function setupLoading(){
-  ensureLoader($('dropLuiz'),'ohSupplierLoader');
-  ensureLoader($('dropShopee'),'ohShopeeLoader');
-  watchImport('btnImportSupplier','fileLuiz','dropLuiz','Importando catálogo do fornecedor...');
-  watchImport('btnImportShopee','fileShopee','dropShopee','Importando catálogo da Shopee...');
-}
-
-let metricsVisible=null;
-function updateMetricsVisibility(){
-  const metrics=$('metrics');if(!metrics)return;
-  const hasSupplier=(readSession().luiz||[]).length>0;
-  if(hasSupplier===metricsVisible)return;
-  metricsVisible=hasSupplier;
-  if(hasSupplier){metrics.style.display='';metrics.classList.add('oh-metrics-reveal');setTimeout(()=>metrics.classList.remove('oh-metrics-reveal'),350)}else metrics.style.display='none';
-}
-
-function init(){
-  addCss();
-  decorateMetricCards();
-  decorateControls();
-  setupLoading();
-  updateMetricsVisibility();
-  const m=$('mLuiz');if(m)new MutationObserver(updateMetricsVisibility).observe(m,{childList:true,characterData:true,subtree:true});
-  const uploads=document.querySelector('.upload-panel');if(uploads)new MutationObserver(()=>{decorateControls();setupLoading();updateMetricsVisibility()}).observe(uploads,{childList:true,subtree:true});
-  setInterval(updateMetricsVisibility,900);
-  document.addEventListener('keydown',e=>{if(e.key==='Escape')closePopover()});
-}
+function addCss(){if($('onboardingHelpCss'))return;const s=document.createElement('style');s.id='onboardingHelpCss';s.textContent=`.oh-help-dot{width:22px;height:22px;min-width:22px;border-radius:999px;border:1px solid #5d512c;background:#15140f;color:#e8c65b;font:800 12px/1 system-ui;display:inline-grid;place-items:center;cursor:pointer;vertical-align:middle;transition:.16s;box-shadow:none;padding:0}.oh-help-dot:hover{border-color:#d4af37;background:#211d0d;transform:translateY(-1px)}.oh-help-dot:focus-visible{outline:2px solid #d4af37;outline-offset:2px}.oh-help-float{position:absolute;top:9px;right:9px;z-index:4}.metric{position:relative}.dropzone{position:relative}.dropzone>.oh-help-dot{position:absolute;right:12px;top:12px;z-index:5}.oh-help-pair{display:inline-flex;align-items:center;gap:7px}.oh-label-with-help{display:inline-flex!important;align-items:center;gap:6px}.oh-popover{position:fixed;z-index:1000;width:min(330px,calc(100vw - 24px));background:#141414;border:1px solid #4a4124;border-radius:13px;padding:13px 14px 14px;box-shadow:0 18px 45px #000c;color:#fff;animation:ohPop .14s ease-out}.oh-popover:before{content:'';position:absolute;width:9px;height:9px;background:#141414;border-left:1px solid #4a4124;border-top:1px solid #4a4124;transform:rotate(45deg);top:-5px;left:var(--arrow-left,26px)}.oh-popover.oh-above:before{top:auto;bottom:-5px;transform:rotate(225deg)}.oh-pop-head{display:flex;align-items:flex-start;justify-content:space-between;gap:10px;margin-bottom:7px}.oh-pop-head strong{font-size:13px;color:#f4d76f}.oh-pop-close{width:25px;height:25px;border-radius:7px;border:1px solid #333;background:#191919;color:#aaa;cursor:pointer;padding:0}.oh-popover p{margin:0;color:#b9b6ad;font-size:12px;line-height:1.55}.oh-popover b{color:#e7e2d5}@keyframes ohPop{from{opacity:0;transform:translateY(-4px)}to{opacity:1;transform:translateY(0)}}.oh-loader{position:absolute;inset:0;z-index:20;border-radius:inherit;background:rgba(9,14,11,.92);display:none;align-items:center;justify-content:center;flex-direction:column;gap:8px;text-align:center;padding:14px;backdrop-filter:blur(2px)}.oh-loading .oh-loader{display:flex}.oh-gear{font-size:34px;line-height:1;animation:ohSpin 1.05s linear infinite;filter:drop-shadow(0 0 8px #d4af3744)}.oh-loader strong{font-size:13px;color:#f1e5bb}.oh-loader small{font-size:11px;color:#aaa69d}@keyframes ohSpin{to{transform:rotate(360deg)}}.oh-metrics-reveal{animation:ohMetrics .28s ease-out}@keyframes ohMetrics{from{opacity:0;transform:translateY(-7px)}to{opacity:1;transform:none}}@media(max-width:720px){.oh-popover{left:12px!important;right:12px!important;top:auto!important;bottom:18px!important;width:auto}.oh-popover:before{display:none}}`;document.head.appendChild(s)}
+function closePopover(){if(activePopover){activePopover.remove();activePopover=null}}
+function showPopover(anchor,title,text){closePopover();const d=document.createElement('div');d.className='oh-popover';d.setAttribute('role','dialog');d.setAttribute('aria-label',title);d.innerHTML=`<div class="oh-pop-head"><strong>${esc(title)}</strong><button class="oh-pop-close" type="button" aria-label="Fechar">✕</button></div><p>${text}</p>`;document.body.appendChild(d);activePopover=d;const r=anchor.getBoundingClientRect(),w=d.offsetWidth,h=d.offsetHeight;let left=Math.max(12,Math.min(innerWidth-w-12,r.left+r.width/2-w/2)),top=r.bottom+9;if(top+h>innerHeight-12){top=Math.max(12,r.top-h-9);d.classList.add('oh-above')}d.style.left=`${left}px`;d.style.top=`${top}px`;d.style.setProperty('--arrow-left',`${Math.max(14,Math.min(w-22,r.left+r.width/2-left-5))}px`);d.querySelector('.oh-pop-close').onclick=closePopover;setTimeout(()=>document.addEventListener('pointerdown',outside,{once:true}),0);function outside(e){if(activePopover&&activePopover.contains(e.target)){setTimeout(()=>document.addEventListener('pointerdown',outside,{once:true}),0);return}closePopover()}}
+function helpButton(title,text,extra=''){const b=document.createElement('button');b.type='button';b.className=`oh-help-dot ${extra}`.trim();b.textContent='?';b.title=`Ajuda: ${title}`;b.setAttribute('aria-label',`Ajuda sobre ${title}`);b.addEventListener('click',e=>{e.preventDefault();e.stopPropagation();showPopover(b,title,text)});return b}
+const metricHelp={'Produtos fornecedor':['Produtos do fornecedor','Mostra quantos produtos de <b>todos os fornecedores</b> estão salvos no catálogo acumulado deste navegador. Novos catálogos podem ser adicionados sem apagar os anteriores.'],'Correspondências':['Correspondências','Quantidade de produtos que já passaram pelo garimpo e atingiram a compatibilidade necessária para serem comparados com a base da Shopee.'],'Vale a pena':['Vale a pena','Conta os produtos que você marcou manualmente como <b>Vale a pena</b>. Eles podem entrar na sua lista de compra.'],'Não vale':['Não vale','Conta os produtos que você descartou manualmente. A decisão é sua e pode ser alterada depois.'],'Lucro médio':['Lucro médio','Média do lucro calculado no cenário de <b>preço médio de venda</b>, usando custo do fornecedor, taxas da Shopee, embalagem e outros custos configurados.']};
+function decorateMetricCards(){document.querySelectorAll('#metrics .metric').forEach(card=>{if(card.querySelector('.oh-help-dot'))return;const label=card.querySelector('span')?.textContent.trim(),cfg=metricHelp[label];if(cfg)card.appendChild(helpButton(cfg[0],cfg[1],'oh-help-float'))})}
+function wrapWithHelp(el,title,text){if(!el||el.dataset.ohHelp)return;el.dataset.ohHelp='1';const parent=el.parentNode,wrap=document.createElement('span');wrap.className='oh-help-pair';parent.insertBefore(wrap,el);wrap.appendChild(el);wrap.appendChild(helpButton(title,text))}
+function decorateControls(){wrapWithHelp($('btnRestore'),'Restaurar última sessão','Recupera os dados salvos <b>neste navegador</b>: catálogos, produtos, resultados e decisões da sessão anterior. Não baixa dados de uma conta na nuvem.');const compact=document.querySelector('.compact-field');if(compact&&!compact.dataset.ohHelp){compact.dataset.ohHelp='1';const label=compact.querySelector(':scope > span');if(label){label.classList.add('oh-label-with-help');label.appendChild(helpButton('Compatibilidade mínima','Define o quanto os nomes/modelos precisam se parecer para o Garimpeiro considerar uma correspondência. <b>Valor maior = menos resultados e mais rigor.</b> Valor menor = mais candidatos, mas exige mais conferência manual.'))}}const sup=$('dropLuiz');if(sup&&!sup.querySelector(':scope > .oh-help-dot'))sup.appendChild(helpButton('Adicionar catálogo de fornecedor','Primeiro informe o nome do fornecedor. Depois selecione a planilha XLSX/CSV. O catálogo é <b>cumulativo</b>: você pode adicionar vários fornecedores e o Garimpeiro mantém os produtos já salvos.'));const sh=$('dropShopee');if(sh&&!sh.querySelector(':scope > .oh-help-dot'))sh.appendChild(helpButton('Catálogo Shopee','Importa uma base de anúncios da Shopee para o primeiro garimpo de correspondências. Depois, o preço atual de cada oportunidade pode ser conferido pelo print e análise da IA.'))}
+function ensureLoader(drop,id){if(!drop||drop.querySelector('.oh-loader'))return;const d=document.createElement('div');d.className='oh-loader';d.id=id;d.innerHTML='<div class="oh-gear">⚙️</div><strong>Carregando planilha...</strong><small>Aguarde enquanto o Garimpeiro lê e organiza os dados.</small>';drop.appendChild(d)}
+function loading(drop,on,label){if(!drop)return;drop.classList.toggle('oh-loading',!!on);drop.setAttribute('aria-busy',on?'true':'false');const strong=drop.querySelector('.oh-loader strong');if(strong&&label)strong.textContent=label}
+function watchImport(buttonId,inputId,dropId,label){const btn=$(buttonId),input=$(inputId),drop=$(dropId);if(!btn||!input||!drop||btn.dataset.ohLoading)return;btn.dataset.ohLoading='1';btn.addEventListener('click',()=>{if(btn.disabled||!input.files?.length)return;if(inputId==='fileLuiz'&&!String($('supplierName')?.value||'').trim())return;loading(drop,true,label);const started=Date.now(),poll=()=>{if(!document.body.contains(drop))return;if(!input.value){setTimeout(()=>loading(drop,false),220);return}if(Date.now()-started>45000){loading(drop,false);return}setTimeout(poll,120)};setTimeout(poll,120)},true)}
+function setupLoading(){ensureLoader($('dropLuiz'),'ohSupplierLoader');ensureLoader($('dropShopee'),'ohShopeeLoader');watchImport('btnImportSupplier','fileLuiz','dropLuiz','Importando catálogo do fornecedor...');watchImport('btnImportShopee','fileShopee','dropShopee','Importando catálogo da Shopee...')}
+let metricsVisible=null;function updateMetricsVisibility(){const metrics=$('metrics');if(!metrics)return;const hasSupplier=(readSession().luiz||[]).length>0;if(hasSupplier===metricsVisible)return;metricsVisible=hasSupplier;if(hasSupplier){metrics.style.display='';metrics.classList.add('oh-metrics-reveal');setTimeout(()=>metrics.classList.remove('oh-metrics-reveal'),350)}else metrics.style.display='none'}
+function init(){addCss();decorateMetricCards();decorateControls();setupLoading();updateMetricsVisibility();const m=$('mLuiz');if(m)new MutationObserver(updateMetricsVisibility).observe(m,{childList:true,characterData:true,subtree:true});const uploads=document.querySelector('.upload-panel');if(uploads)new MutationObserver(()=>{decorateControls();setupLoading();updateMetricsVisibility()}).observe(uploads,{childList:true,subtree:true});setInterval(updateMetricsVisibility,900);document.addEventListener('keydown',e=>{if(e.key==='Escape')closePopover()})}
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init,{once:true});else setTimeout(init,0);
 })();
-// deploy trigger after Vercel Git integration
+(()=>{'use strict';const $=id=>document.getElementById(id);function clean(){['btnExportBackup','btnImportBackup','backupFile'].forEach(id=>{const old=$(id);if(!old||!old.dataset.secure||old.dataset.listenersCleaned)return;const click=old.onclick,change=old.onchange,n=old.cloneNode(true);n.dataset.listenersCleaned='1';if(click)n.onclick=click;if(change)n.onchange=change;old.replaceWith(n)})}function keep(){const s=$('categoryFilter');if(s&&s.value&&s.value!=='all')localStorage.setItem('garimpeiro-category-filter',s.value)}const start=()=>{setTimeout(clean,1600);setTimeout(clean,2800);setInterval(keep,1100)};document.readyState==='loading'?document.addEventListener('DOMContentLoaded',start,{once:true}):start()})();
