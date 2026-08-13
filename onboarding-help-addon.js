@@ -58,8 +58,7 @@ function showPopover(anchor,title,text){
   const r=anchor.getBoundingClientRect(),w=d.offsetWidth,h=d.offsetHeight;
   let left=Math.max(12,Math.min(innerWidth-w-12,r.left+r.width/2-w/2));
   let top=r.bottom+9;
-  let above=false;
-  if(top+h>innerHeight-12){top=Math.max(12,r.top-h-9);above=true;d.classList.add('oh-above')}
+  if(top+h>innerHeight-12){top=Math.max(12,r.top-h-9);d.classList.add('oh-above')}
   d.style.left=`${left}px`;
   d.style.top=`${top}px`;
   d.style.setProperty('--arrow-left',`${Math.max(14,Math.min(w-22,r.left+r.width/2-left-5))}px`);
@@ -107,14 +106,12 @@ function wrapWithHelp(el,title,text){
 
 function decorateControls(){
   wrapWithHelp($('btnRestore'),'Restaurar última sessão','Recupera os dados salvos <b>neste navegador</b>: catálogos, produtos, resultados e decisões da sessão anterior. Não baixa dados de uma conta na nuvem.');
-
   const compact=document.querySelector('.compact-field');
   if(compact&&!compact.dataset.ohHelp){
     compact.dataset.ohHelp='1';
     const label=compact.querySelector(':scope > span');
     if(label){label.classList.add('oh-label-with-help');label.appendChild(helpButton('Compatibilidade mínima','Define o quanto os nomes/modelos precisam se parecer para o Garimpeiro considerar uma correspondência. <b>Valor maior = menos resultados e mais rigor.</b> Valor menor = mais candidatos, mas exige mais conferência manual.'))}
   }
-
   const sup=$('dropLuiz');
   if(sup&&!sup.querySelector(':scope > .oh-help-dot'))sup.appendChild(helpButton('Adicionar catálogo de fornecedor','Primeiro informe o nome do fornecedor. Depois selecione a planilha XLSX/CSV. O catálogo é <b>cumulativo</b>: você pode adicionar vários fornecedores e o Garimpeiro mantém os produtos já salvos.'));
   const sh=$('dropShopee');
@@ -183,3 +180,4 @@ function init(){
 }
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init,{once:true});else setTimeout(init,0);
 })();
+// deploy trigger after Vercel Git integration
