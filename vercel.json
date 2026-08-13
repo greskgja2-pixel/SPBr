@@ -2,7 +2,8 @@
   "version": 2,
   "rewrites": [
     {"source":"/api/shopee-search","destination":"/api/shopee-search.js"},
-    {"source":"/api/analyze-screenshot","destination":"/api/analyze-screenshot.js"}
+    {"source":"/api/analyze-screenshot","destination":"/api/analyze-screenshot.js"},
+    {"source":"/api/supplier-image","destination":"/api/supplier-image.js"}
   ],
   "headers": [
     {"source":"/(.*)","headers":[
