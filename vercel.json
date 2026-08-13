@@ -1,0 +1,5 @@
+{
+  "version": 2,
+  "rewrites": [{"source":"/api/shopee-search","destination":"/api/shopee-search.js"}],
+  "headers": [{"source":"/(.*)","headers":[{"key":"X-Content-Type-Options","value":"nosniff"},{"key":"Referrer-Policy","value":"strict-origin-when-cross-origin"}]}]
+}
